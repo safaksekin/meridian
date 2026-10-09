@@ -1,0 +1,50 @@
+.mode-headcount .hc-prompt { margin-bottom: 10px; padding: 10px 14px; }
+.mode-headcount .hc-prompt p { margin: 2px 0; }
+.mode-headcount .hc-prompt .prompt { margin: 0 0 4px; font-size: 1.05rem; }
+.mode-headcount .hc-prompt .prompt strong { font-size: 1.15rem; }
+.mode-headcount .hc-region { text-align: center; font-weight: 600; color: var(--accent); }
+.mode-headcount .hc-hint { text-align: center; font-size: 0.85rem; }
+
+.mode-headcount .hc-map { position: relative; height: clamp(250px, 62vw, 440px); user-select: none; -webkit-user-select: none; }
+.mode-headcount .hc-map .hc-svg { width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
+.mode-headcount .hc-zoom { position: absolute; right: 8px; top: 8px; display: grid; gap: 6px; }
+.mode-headcount .hc-zoom .icon-btn { min-width: 32px; height: 32px; padding: 0; opacity: 0.92; }
+
+.mode-headcount .hc-circle .hc-ring { fill-opacity: 0.16; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.mode-headcount .hc-circle .hc-dot { stroke: none; }
+.mode-headcount .hc-circle.preview .hc-ring { fill: var(--accent); stroke: var(--accent); stroke-dasharray: 5 4; }
+.mode-headcount .hc-circle.pinned .hc-ring,
+.mode-headcount .hc-circle.measure .hc-ring { fill: var(--accent); stroke: var(--accent); }
+.mode-headcount .hc-circle.preview .hc-dot,
+.mode-headcount .hc-circle.pinned .hc-dot,
+.mode-headcount .hc-circle.measure .hc-dot { fill: var(--accent); }
+.mode-headcount .hc-circle.att.good .hc-ring { fill: var(--good); stroke: var(--good); }
+.mode-headcount .hc-circle.att.near .hc-ring { fill: var(--near); stroke: var(--near); }
+.mode-headcount .hc-circle.att.bad .hc-ring { fill: var(--bad); stroke: var(--bad); }
+.mode-headcount .hc-circle.att .hc-dot { fill: var(--ink); }
+.mode-headcount .hc-circle.perfect .hc-ring { fill: none; stroke: var(--ink); stroke-dasharray: 2 3; stroke-width: 1.6; }
+.mode-headcount .hc-circle.perfect .hc-dot { fill: var(--ink); }
+.mode-headcount .hc-density { opacity: 0.6; pointer-events: none; }
+
+.mode-headcount .hc-labels { pointer-events: none; }
+.mode-headcount .hc-label {
+  font: 700 12px/1 Inter, system-ui, sans-serif; fill: var(--ink); text-anchor: middle;
+  paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round;
+  transform: translateY(-6px);
+}
+.mode-headcount .hc-label.perfect { font-weight: 600; font-size: 11px; }
+
+.mode-headcount .hc-controls { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 10px 0 4px; min-height: 44px; flex-wrap: wrap; }
+.mode-headcount .hc-left { font-size: 0.9rem; }
+.mode-headcount .hc-readout { margin: 0; min-height: 1.4em; text-align: center; font-size: 0.9rem; color: var(--muted); }
+.mode-headcount .hc-attempts { margin-top: 8px; }
+.mode-headcount .hc-attempts .guess strong { font-variant-numeric: tabular-nums; }
+.mode-headcount .hc-score { width: 2.6em; height: 1.9em; }
+
+.mode-headcount .hc-detail { text-align: left; }
+.mode-headcount .hc-detail p { margin: 6px 0; }
+.mode-headcount .hc-detail h3 { font-size: 0.95rem; margin: 12px 0 6px; }
+.mode-headcount .hc-perfect { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.mode-headcount .hc-perfect li { display: grid; grid-template-columns: 14px 1fr auto; gap: 8px; align-items: center; font-size: 0.92rem; }
+.mode-headcount .hc-swatch { width: 12px; height: 12px; border-radius: 50%; border: 1.6px dashed var(--ink); }
+.mode-headcount .hc-small { font-size: 0.78rem; line-height: 1.4; }

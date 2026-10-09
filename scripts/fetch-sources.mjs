@@ -11,6 +11,7 @@ const SOURCES = [
   ['ne_10m_lakes.geojson', NE + 'ne_10m_lakes.geojson'],
   ['cities500.zip', 'https://download.geonames.org/export/dump/cities500.zip'],
   ['countryInfo.txt', 'https://download.geonames.org/export/dump/countryInfo.txt'],
+  ['admin1CodesASCII.txt', 'https://download.geonames.org/export/dump/admin1CodesASCII.txt'],
 ];
 
 await mkdir(RAW, { recursive: true });

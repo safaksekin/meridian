@@ -61,7 +61,7 @@ function home(day: number) {
       h(
         'footer',
         { class: 'foot' },
-        `${t('attribution')}: Natural Earth, GeoNames (CC BY 4.0), © OpenStreetMap contributors (ODbL), WorldPop / GHSL.`,
+        `${t('attribution')}: Natural Earth, GeoNames (CC BY 4.0), © OpenStreetMap contributors (ODbL), GHSL (CC BY 4.0).`,
       ),
     ),
   );

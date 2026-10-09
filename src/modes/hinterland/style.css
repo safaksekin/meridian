@@ -1,0 +1,55 @@
+.mode-hinterland {
+  --hl-target: color-mix(in srgb, var(--accent) 38%, var(--land));
+}
+.mode-hinterland [hidden] { display: none !important; }
+.mode-hinterland .hl-clues { padding: 12px 14px; }
+.mode-hinterland .hl-clues .prompt { margin: 0 0 8px; }
+.mode-hinterland .hl-clues .prompt strong { font-size: 1.05rem; }
+.mode-hinterland .hl-names { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.mode-hinterland .hl-clue {
+  display: grid; grid-template-columns: 26px 1fr; align-items: center; gap: 10px;
+  padding: 7px 10px; border-radius: 10px; background: var(--surface-2);
+}
+.mode-hinterland .hl-clue.is-hidden { background: transparent; border: 1px dashed var(--line); }
+.mode-hinterland .hl-clue.is-new { animation: hl-pop 0.35s ease-out; }
+.mode-hinterland .hl-num {
+  display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--accent); color: var(--accent-text); font-weight: 700; font-size: 0.85rem;
+}
+.mode-hinterland .hl-clue.is-hidden .hl-num { background: var(--line); color: var(--muted); }
+.mode-hinterland .hl-name {
+  font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; min-width: 0; overflow-wrap: anywhere;
+  display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px;
+}
+.mode-hinterland .hl-admin { font-size: 0.8rem; font-weight: 500; color: var(--muted); }
+.mode-hinterland .hl-placeholder { color: var(--muted); font-weight: 400; letter-spacing: 0.2em; }
+.mode-hinterland .hl-left { text-align: center; margin: 0 0 4px; font-size: 0.88rem; }
+
+.mode-hinterland .hl-guesses .guess { gap: 8px; padding: 8px 10px; }
+.mode-hinterland .hl-g { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.mode-hinterland .hl-fam { background: var(--bad); color: #fff; white-space: nowrap; }
+.mode-hinterland .hl-fam.is-same { background: var(--good); }
+.mode-hinterland .hl-dist { font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 0.9rem; text-align: right; }
+
+.mode-hinterland .hl-reveal { text-align: left; margin: 10px 0 4px; }
+.mode-hinterland .hl-answer { font-size: 1.1rem; font-weight: 700; margin: 0; text-align: center; }
+.mode-hinterland .hl-flag { font-size: 1.4rem; vertical-align: -0.15em; }
+.mode-hinterland .hl-family { text-align: center; margin: 2px 0 10px; font-size: 0.9rem; }
+.mode-hinterland .hl-map { min-height: 120px; }
+.mode-hinterland .mapbox svg { touch-action: auto; }
+.mode-hinterland .hl-dot circle { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.mode-hinterland .hl-dot text { fill: var(--accent-text); font: 700 10px/1 system-ui, sans-serif; pointer-events: none; }
+.mode-hinterland .hl-pattern { margin: 10px 0 0; font-size: 0.92rem; }
+.mode-hinterland .hl-source { margin: 8px 0 0; font-size: 0.75rem; }
+
+@keyframes hl-pop {
+  from { transform: scale(0.97); background: color-mix(in srgb, var(--accent) 25%, var(--surface-2)); }
+  to { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mode-hinterland .hl-clue.is-new { animation: none; }
+}
+@media (max-width: 380px) {
+  .mode-hinterland .hl-guesses .guess { gap: 6px; padding: 8px; font-size: 0.92rem; }
+  .mode-hinterland .hl-dist { font-size: 0.82rem; }
+}
