@@ -238,15 +238,22 @@ export function statsBlock(mode: string, buckets: string[]): HTMLElement {
   );
 }
 
+/** Modes write share links against a placeholder host; swap in wherever the site is actually served. */
+function liveShareText(text: string): string {
+  const base = `${location.origin}${location.pathname}`;
+  return text.split('https://meridian.example/').join(base);
+}
+
 /** End-of-game panel: headline, mode-specific detail, share button, stats, countdown. */
 export function resultPanel(opts: { won: boolean; headline: string; detail?: Node; share: string; mode: string; buckets: string[] }): HTMLElement {
+  const share = liveShareText(opts.share);
   return h(
     'section',
     { class: `result ${opts.won ? 'won' : 'lost'}` },
     h('h2', {}, opts.headline),
     opts.detail ?? null,
-    h('pre', { class: 'share-preview' }, opts.share),
-    h('button', { class: 'btn primary wide', onclick: () => copyShare(opts.share) }, t('share')),
+    h('pre', { class: 'share-preview' }, share),
+    h('button', { class: 'btn primary wide', onclick: () => copyShare(share) }, t('share')),
     statsBlock(opts.mode, opts.buckets),
     h('p', { class: 'next' }, `${t('next')}: `, countdown()),
   );
