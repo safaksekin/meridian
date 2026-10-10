@@ -4,7 +4,7 @@ import { lang, setLang, t, type Lang } from '../core/i18n';
 import { LOGO } from './art';
 import { TEST_MODE } from '../core/config';
 import { dayNumber, todayNumber } from '../core/daily';
-import { clearGame } from '../core/storage';
+import { clearGame, getPref, setPref } from '../core/storage';
 import { progressSummary } from '../core/progress';
 import { editNickname, getNickname } from '../core/challenge';
 
@@ -122,6 +122,38 @@ function goToDay(n: number) {
   location.href = `${location.pathname}${q}${location.hash}`;
 }
 
+// Brand colour candidates, switchable from the test bar until one is chosen. The first is the
+// default in style.css; the others are `:root[data-brand=…]` overrides there.
+const BRANDS: { id: string; name: string; swatch: string }[] = [
+  { id: '', name: 'Turkuaz', swatch: '#0b7c88' },
+  { id: 'blue', name: 'Mavi', swatch: '#2864dc' },
+  { id: 'green', name: 'Yeşil', swatch: '#1f7a4d' },
+  { id: 'orange', name: 'Turuncu', swatch: '#c2500f' },
+];
+
+/** Applies the brand candidate picked in test mode (no-op once TEST_MODE is off). */
+export function applyTestBrand() {
+  if (!TEST_MODE) return;
+  const id = getPref('brand') ?? '';
+  if (id && BRANDS.some((b) => b.id === id)) document.documentElement.dataset.brand = id;
+  else delete document.documentElement.dataset.brand;
+}
+
+function brandPicker(): HTMLElement {
+  const current = getPref('brand') ?? '';
+  const el = h('div', { class: 'tb-brands', role: 'group', 'aria-label': 'Marka rengi' });
+  for (const b of BRANDS) {
+    const btn = h('button', { class: 'tb-swatch', type: 'button', title: b.name, 'aria-label': b.name, 'aria-pressed': String(b.id === current), style: { background: b.swatch } });
+    btn.addEventListener('click', () => {
+      setPref('brand', b.id);
+      applyTestBrand();
+      for (const o of el.children) o.setAttribute('aria-pressed', String(o === btn));
+    });
+    el.append(btn);
+  }
+  return el;
+}
+
 /** Test-mode toolbar. On a game page it can also restart the current puzzle. */
 export function testBar(mode?: string): HTMLElement | null {
   if (!TEST_MODE) return null;
@@ -132,6 +164,7 @@ export function testBar(mode?: string): HTMLElement | null {
     'div',
     { class: 'testbar', role: 'toolbar', 'aria-label': t('testMode') },
     h('span', { class: 'tb-tag', title: t('testHint') }, `🧪 ${t('testMode')}`),
+    mode ? null : brandPicker(),
     h(
       'div',
       { class: 'tb-controls' },

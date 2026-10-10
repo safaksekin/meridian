@@ -14,15 +14,15 @@ const svg = (body: string) =>
   `<svg class="mc-overlay" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${body}</svg>`;
 
 const pin = (x: number, y: number) =>
-  `<g transform="translate(${x} ${y})"><path d="M0 0c-9-12-15-19-15-27a15 15 0 0 1 30 0c0 8-6 15-15 27z" fill="#fff"/><circle cy="-27" r="6.5" fill="#2864dc"/></g>`;
+  `<g transform="translate(${x} ${y})"><path d="M0 0c-9-12-15-19-15-27a15 15 0 0 1 30 0c0 8-6 15-15 27z" fill="#fff"/><circle cy="-27" r="6.5" fill="var(--brand-light)"/></g>`;
 
 export const OVERLAYS: Record<string, string> = {
   beeline: svg(
     `<path d="M215 330 C 330 200, 470 190, 600 250" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 12"/>${pin(215, 330)}${pin(600, 250)}`,
   ),
   streets: svg(
-    `<path d="M150 410 L250 300 L320 330 L380 250 L470 230 L520 290 L610 260 L680 160" fill="none" stroke="#2f6bff" stroke-width="7" stroke-linejoin="round" stroke-linecap="round" opacity=".92"/>` +
-      [[150, 410], [250, 300], [380, 250], [520, 290], [680, 160]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="9" fill="#fff" stroke="#2f6bff" stroke-width="4"/>`).join(''),
+    `<path d="M150 410 L250 300 L320 330 L380 250 L470 230 L520 290 L610 260 L680 160" fill="none" stroke="var(--brand-dark)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round" opacity=".92"/>` +
+      [[150, 410], [250, 300], [380, 250], [520, 290], [680, 160]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="9" fill="#fff" stroke="var(--brand-dark)" stroke-width="4"/>`).join(''),
   ),
   mental: '',
   headcount: svg(

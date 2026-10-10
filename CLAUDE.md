@@ -18,6 +18,7 @@ Meridian: a free, static, daily geography puzzle site with six modes. Live at ht
 - **Zero cost.** Static hosting only, open data, no paid APIs, no backend. No surprise bills — never add Workers/Functions or paid services without asking.
 - **No fake data.** No invented player counts or leaderboards. A real global leaderboard needs a backend: user decision, not built.
 - **Practical, single-screen, short games.** Multi-round formats and film/TV themes were rejected; Turkey-only scope rejected (global audience).
+- **Brand tokens:** colour and corner sharpness are set once at the top of `src/style.css` (`--brand-light`, `--brand-dark`, `--corner`); everything else derives from them (`--brand`, `--accent`, `--btn-primary`, `--radius-xs/sm/-/lg`). Never hard-code a brand colour or a `border-radius` in px. User likes the current sharpness (`--corner: 6px`).
 - **Design:** home follows the user's own reference (photo cards, relief-map hero, nav). User REJECTED Playfair Display + Space Mono ("AI slop"); current type is Archivo (expanded heavy headings) + Archivo Narrow (labels). Ivory vs. cool-gray background: user doesn't mind. Daily-changing card art is unnecessary. Phones: cards stay 3 × 2.
 
 ## Stack & layout
@@ -48,6 +49,7 @@ Verify UI changes in headless Chromium (Playwright) at 390 px and 1280–1440 px
 
 ## Current state (2026-10-10)
 - All six modes done, browser-tested, live. `TEST_MODE = true` in `src/core/config.ts` (daily limit off, test toolbar with prev/next/random/replay; practice rounds never touch stats). **Set to false before public launch.**
+- Brand colour is **undecided**: default is turquoise (my recommendation), and the test bar on the home page has four swatches (turquoise / blue / green / orange, `BRANDS` in `src/home/chrome.ts` + `:root[data-brand=…]` in `src/style.css`) so the user can compare on the live site. Once they choose: put the two values in `--brand-light` / `--brand-dark` and delete the picker and the overrides.
 - Share texts use English brand names ("Meridian Beeline #12") in both languages, by design.
 
 ## Next steps / open items
@@ -55,5 +57,6 @@ Verify UI changes in headless Chromium (Playwright) at 390 px and 1280–1440 px
 2. Before launch: `TEST_MODE = false`, final name/domain decision ("Meridian" is a working title; common brand name).
 3. Streetprint: ~39 planned crops never downloaded (Overpass rate limits). Re-run `node scripts/build-streets.mjs` (no `--offline`) to fetch them; cache lives in `data-raw/streets/overpass`.
 4. Tripoint has 152 puzzles (cycles); others have 400+.
-5. Headcount grid is decoded twice when a player goes home → game (minor).
+5. `public/data/world.json`: simplification collapsed ~1300 tiny islands/enclaves into two-point rings. `drawWorld` skips them (they flooded the globe with one country's fill at some rotations); 72 micro-states therefore have no shape on the small maps. A cleaner fix is in `scripts/build-countries.mjs`.
+5b. Headcount grid is decoded twice when a player goes home → game (minor).
 6. Hinterland: some Palestine puzzles may include settlement names GeoNames files under PS — left as is.

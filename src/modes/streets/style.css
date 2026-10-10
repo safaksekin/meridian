@@ -27,7 +27,7 @@
 .mode-streets .st-mapwrap { position: relative; }
 .mode-streets .st-map {
   position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden;
-  background: var(--st-paper); border: 1px solid var(--line); border-radius: 12px;
+  background: var(--st-paper); border: 1px solid var(--line); border-radius: var(--radius);
 }
 .mode-streets .st-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .mode-streets .st-zoom { display: none; }
@@ -60,11 +60,11 @@
 
 .mode-streets .st-tabs {
   position: absolute; top: 8px; left: 8px; display: flex; gap: 2px; padding: 2px;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 9px; box-shadow: var(--shadow);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); box-shadow: var(--shadow);
 }
 .mode-streets .st-tabs[hidden] { display: none; }
 .mode-streets .st-tab {
-  border: 0; background: transparent; padding: 4px 10px; border-radius: 7px; font-size: 0.8rem; font-weight: 700;
+  border: 0; background: transparent; padding: 4px 10px; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 700;
   cursor: pointer; color: var(--muted);
 }
 .mode-streets .st-tab.active { background: var(--accent); color: var(--accent-text); }
@@ -79,7 +79,7 @@
 }
 .mode-streets .st-scale-label {
   font-size: 0.7rem; font-weight: 700; color: var(--ink); background: color-mix(in srgb, var(--st-paper) 80%, transparent);
-  padding: 0 3px; border-radius: 3px; margin-top: 1px;
+  padding: 0 3px; border-radius: var(--radius-xs); margin-top: 1px;
 }
 
 .mode-streets .st-hints {
@@ -87,7 +87,7 @@
 }
 .mode-streets .st-hints[hidden] { display: none; }
 .mode-streets .st-hint {
-  display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 2px; border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 2px; border-radius: var(--radius-sm);
   background: var(--surface-2); color: var(--muted); font-size: 0.68rem; line-height: 1.2; text-align: center;
   opacity: 0.55; min-width: 0;
 }

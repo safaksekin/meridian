@@ -19,12 +19,13 @@
 
 .mode-beeline .bl-globe {
   flex: 0 1 min(380px, 100vw - 32px); min-height: 140px;
-  background: var(--surface); box-shadow: var(--shadow);
+  background: var(--surface); box-shadow: var(--shadow); user-select: none; -webkit-user-select: none;
 }
 .mode-beeline .bl-globe svg { height: 100%; cursor: grab; }
 .mode-beeline .bl-globe svg:active { cursor: grabbing; }
 .mode-beeline .bl-path { fill: none; stroke: var(--danger); stroke-width: 2.5; stroke-linecap: round; }
 .mode-beeline .bl-path.hint { stroke-dasharray: 4 5; }
+.mode-beeline .bl-arrow { fill: var(--danger); stroke: var(--surface); stroke-width: 1.5; stroke-linejoin: round; paint-order: stroke; }
 .mode-beeline .bl-start { fill: var(--danger); stroke: var(--surface); stroke-width: 2; }
 .mode-beeline .bl-hit { fill: var(--surface); stroke: var(--danger); stroke-width: 2; }
 .mode-beeline .bl-hit-label { font: 700 11px var(--font-sans); fill: var(--danger); text-anchor: middle; dominant-baseline: central; }
@@ -32,7 +33,7 @@
 .mode-beeline .board { display: grid; gap: 4px; }
 .mode-beeline .bl-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
 .mode-beeline .bl-cell {
-  position: relative; height: 46px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+  position: relative; height: 46px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface);
   display: grid; place-items: center; text-align: center; padding: 2px; overflow: hidden;
   font: 600 0.7rem/1.1 var(--font-label); overflow-wrap: break-word; hyphens: auto;
 }
@@ -59,7 +60,7 @@
 
 .mode-beeline .result { margin-top: 6px; }
 .mode-beeline .bl-reveal { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 4px; text-align: left; }
-.mode-beeline .bl-reveal li { display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; background: var(--surface-2); border-radius: 8px; }
+.mode-beeline .bl-reveal li { display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; background: var(--surface-2); border-radius: var(--radius-sm); }
 .mode-beeline .bl-fact { font-size: 0.9rem; color: var(--muted); margin: 8px 0 0; }
 
 /* The input sits at the bottom edge on phones: suggestions open upwards. */

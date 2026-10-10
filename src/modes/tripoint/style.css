@@ -80,7 +80,7 @@
 .mode-tripoint .tp-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 10px; }
 .mode-tripoint .tp-slot {
   display: flex; align-items: center; justify-content: center; gap: 4px; min-height: 52px; min-width: 0;
-  padding: 6px 8px; border-radius: 10px; font-size: 0.85rem; line-height: 1.2; text-align: center;
+  padding: 6px 8px; border-radius: var(--radius); font-size: 0.85rem; line-height: 1.2; text-align: center;
   border: 1px solid var(--line); background: var(--surface);
 }
 .mode-tripoint .tp-slot.empty { border-style: dashed; color: var(--muted); background: transparent; }
@@ -96,7 +96,7 @@
 .mode-tripoint .tp-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .mode-tripoint .tp-chip {
   display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 4px 6px;
-  border-radius: 8px; font-size: 0.8rem; font-weight: 700; line-height: 1.15; text-align: center;
+  border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 700; line-height: 1.15; text-align: center;
   color: #fff; background: var(--bad);
 }
 .mode-tripoint .tp-chip.good { background: var(--good); }
@@ -108,7 +108,7 @@
 .mode-tripoint .tp-sub { font-size: 0.85rem; color: var(--muted); margin: 0 0 6px; font-weight: 600; text-align: center; }
 .mode-tripoint .tp-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; }
 .mode-tripoint .tp-legend li { display: flex; align-items: center; gap: 6px; font-weight: 600; }
-.mode-tripoint .tp-sw { width: 14px; height: 14px; border-radius: 4px; display: inline-block; flex: none; }
+.mode-tripoint .tp-sw { width: 14px; height: 14px; border-radius: var(--radius-xs); display: inline-block; flex: none; }
 .mode-tripoint .tp-where { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 12px; }
 .mode-tripoint .tp-globe { width: 84px; height: 84px; flex: none; }
 .mode-tripoint .tp-globe-dot { fill: var(--tp-dot); stroke: var(--surface); stroke-width: 1.5; }

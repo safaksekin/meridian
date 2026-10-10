@@ -100,6 +100,8 @@ const mode: ModeModule = {
       const endKm = state.done ? Infinity : k === 0 ? 600 : p.hits[k].km;
       const coords = lineUpTo(p, endKm);
       layer.append(svgEl('path', { d: path({ type: 'LineString', coordinates: coords }) ?? '', class: `bl-path ${state.done ? '' : 'hint'}` }));
+      const head = arrowHead(proj, coords);
+      if (head) layer.append(svgEl('path', { d: head, class: 'bl-arrow' }));
       const sp = proj([p.lon, p.lat]);
       if (sp && visible(proj, p.lon, p.lat)) layer.append(svgEl('circle', { cx: sp[0], cy: sp[1], r: 5, class: 'bl-start' }));
       const shown = state.done ? 5 : k;
@@ -269,6 +271,23 @@ function lineUpTo(p: Puzzle, km: number): [number, number][] {
   return out;
 }
 
+/** Arrowhead at the end of the line, pointing the way it travels (null when the tip is behind the globe). */
+function arrowHead(proj: GeoProjection, coords: [number, number][], size = 15): string | null {
+  if (coords.length < 2) return null;
+  const end = coords[coords.length - 1];
+  if (!visible(proj, end[0], end[1])) return null;
+  const a = proj(coords[coords.length - 2]);
+  const b = proj(end);
+  if (!a || !b) return null;
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  if (len < 0.5) return null; // seen end-on at the rim: no direction to show
+  const ux = (b[0] - a[0]) / len;
+  const uy = (b[1] - a[1]) / len;
+  const w = size * 0.42;
+  const pt = (along: number, across: number) => `${(b[0] + ux * along - uy * across).toFixed(1)},${(b[1] + uy * along + ux * across).toFixed(1)}`;
+  return `M${pt(size, 0)}L${pt(-size * 0.25, w)}L${pt(0, 0)}L${pt(-size * 0.25, -w)}Z`;
+}
+
 function visible(proj: GeoProjection, lon: number, lat: number): boolean {
   const [rl, rp] = proj.rotate();
   const c = [-rl, -rp];
@@ -281,6 +300,7 @@ function enableDrag(svg: SVGSVGElement, proj: GeoProjection, redraw: () => void)
   let start: { x: number; y: number; rot: [number, number, number] } | null = null;
   let frame = 0;
   svg.addEventListener('pointerdown', (e) => {
+    e.preventDefault(); // no text selection or image drag while turning the globe
     start = { x: e.clientX, y: e.clientY, rot: proj.rotate() as [number, number, number] };
     svg.setPointerCapture(e.pointerId);
   });

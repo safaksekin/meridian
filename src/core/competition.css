@@ -5,7 +5,7 @@
   box-sizing: border-box; display: flex; align-items: center; gap: 12px;
   width: calc(100% - 32px); max-width: 608px; margin: 12px auto 0; padding: 10px 14px;
   border: 1px solid color-mix(in srgb, var(--gold, #d4a017) 55%, var(--line));
-  border-left-width: 4px; border-radius: var(--radius, 10px);
+  border-left-width: 4px; border-radius: var(--radius);
   background: color-mix(in srgb, var(--gold, #d4a017) 10%, var(--surface));
   color: var(--text); box-shadow: var(--shadow, none);
 }
@@ -16,7 +16,7 @@
 
 /* Head-to-head result inside the result panel */
 .cmp-vs {
-  margin: 10px 0 14px; padding: 10px 12px 12px; border-radius: var(--radius, 10px);
+  margin: 10px 0 14px; padding: 10px 12px 12px; border-radius: var(--radius);
   border: 1px solid var(--line); background: var(--surface-2);
 }
 .cmp-vs-tag {

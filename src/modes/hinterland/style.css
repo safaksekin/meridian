@@ -8,7 +8,7 @@
 .mode-hinterland .hl-names { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .mode-hinterland .hl-clue {
   display: grid; grid-template-columns: 26px 1fr; align-items: center; gap: 10px;
-  padding: 7px 10px; border-radius: 10px; background: var(--surface-2);
+  padding: 7px 10px; border-radius: var(--radius); background: var(--surface-2);
 }
 .mode-hinterland .hl-clue.is-hidden { background: transparent; border: 1px dashed var(--line); }
 .mode-hinterland .hl-clue.is-new { animation: hl-pop 0.35s ease-out; }

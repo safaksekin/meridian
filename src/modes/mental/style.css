@@ -83,7 +83,7 @@
 .mode-mental .mm-label {
   position: absolute; left: 0; bottom: 11px; transform: translateX(calc(var(--fx, 0.5) * -100%));
   display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
-  padding: 2px 7px 2px 5px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; line-height: 1.3;
+  padding: 2px 7px 2px 5px; border-radius: var(--radius-sm); font-size: 0.78rem; font-weight: 700; line-height: 1.3;
   background: var(--surface); color: var(--text); border: 1px solid var(--line);
   box-shadow: 0 1px 4px rgb(0 0 0 / 14%); transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
@@ -102,7 +102,7 @@
 .mode-mental .mm-marker.b1 .mm-dot { background: var(--mm-b1); }
 .mode-mental .mm-marker.b2 .mm-dot { background: var(--mm-b2); }
 .mode-mental .mm-marker.b3 .mm-dot { background: var(--mm-b3); }
-.mode-mental .mm-board.revealed .mm-dot { border-radius: 3px; }
+.mode-mental .mm-board.revealed .mm-dot { border-radius: var(--radius-xs); }
 
 .mode-mental .mm-status { margin: 0; min-height: 1.5em; text-align: center; color: var(--muted); font-size: 0.92rem; }
 
@@ -112,7 +112,7 @@
 .mode-mental .mm-score strong { font-size: 2.6rem; line-height: 1; letter-spacing: -0.03em; }
 .mode-mental .mm-score span { color: var(--muted); font-weight: 600; }
 .mode-mental .mm-bias { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
-.mode-mental .mm-bias li { background: var(--surface-2); border-radius: 10px; padding: 8px 12px; line-height: 1.4; font-size: 0.95rem; }
+.mode-mental .mm-bias li { background: var(--surface-2); border-radius: var(--radius); padding: 8px 12px; line-height: 1.4; font-size: 0.95rem; }
 .mode-mental .mm-bias .mm-worst { font-weight: 600; }
 .mode-mental .mm-errs { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
 .mode-mental .mm-errs li { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; padding: 4px 2px; border-bottom: 1px solid var(--line); font-size: 0.92rem; }

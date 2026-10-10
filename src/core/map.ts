@@ -1,7 +1,7 @@
 import { geoPath, type GeoProjection, type GeoPermissibleObjects } from 'd3-geo';
 import { feature, mesh } from 'topojson-client';
 import type { Topology, GeometryCollection } from 'topojson-specification';
-import type { Feature, FeatureCollection, Geometry, MultiLineString } from 'geojson';
+import type { Feature, FeatureCollection, Geometry, MultiLineString, Position } from 'geojson';
 import { loadJSON } from './data';
 import { svgEl } from './ui';
 
@@ -23,6 +23,27 @@ export async function loadWorld() {
 }
 
 /**
+ * Simplifying the map collapses tiny islands and enclaves into rings of two distinct points.
+ * d3-geo cannot tell the inside of such a ring from its outside, and at some rotations it paints
+ * the whole globe in that country's fill. Draw only the rings that still enclose an area.
+ */
+const drawable = new WeakMap<CountryFeature, GeoPermissibleObjects | null>();
+function drawableShape(f: CountryFeature): GeoPermissibleObjects | null {
+  if (drawable.has(f)) return drawable.get(f)!;
+  const g = f.geometry;
+  const solid = (ring: Position[]) => new Set(ring.map((c) => `${c[0]},${c[1]}`)).size >= 3;
+  let shape: GeoPermissibleObjects | null = f as GeoPermissibleObjects;
+  if (g.type === 'Polygon' || g.type === 'MultiPolygon') {
+    const polygons = (g.type === 'Polygon' ? [g.coordinates] : g.coordinates)
+      .filter((poly) => solid(poly[0]))
+      .map((poly) => poly.filter((ring, i) => i === 0 || solid(ring)));
+    shape = polygons.length ? { type: 'MultiPolygon', coordinates: polygons } : null;
+  }
+  drawable.set(f, shape);
+  return shape;
+}
+
+/**
  * Draws the world into an <svg> with the given projection.
  * `fill` returns a CSS fill (or null for default land colour) per country code.
  */
@@ -35,12 +56,15 @@ export function drawWorld(
   const path = geoPath(projection);
   svg.replaceChildren();
   const g = svgEl('g');
-  if ((projection as unknown as { clipAngle?: () => number }).clipAngle?.()) {
-    g.append(svgEl('path', { d: path({ type: 'Sphere' }) ?? '', class: 'sphere' }));
-  }
+  const globe = !!(projection as unknown as { clipAngle?: () => number }).clipAngle?.();
+  const sphere = globe ? (path({ type: 'Sphere' }) ?? '') : '';
+  if (globe) g.append(svgEl('path', { d: sphere, class: 'sphere' }));
   for (const f of w.countries) {
-    const d = path(f as GeoPermissibleObjects);
-    if (!d) continue;
+    const shape = drawableShape(f);
+    const d = shape && path(shape);
+    // A country on the far side must project to nothing. If it comes back as the full disc, d3-geo
+    // misjudged it (a rare rounding case); skip it instead of flooding the globe.
+    if (!d || (globe && d === sphere)) continue;
     const p = svgEl('path', { d, class: 'land', 'data-code': f.id });
     const c = fill(f.id);
     if (c) p.style.fill = c;
