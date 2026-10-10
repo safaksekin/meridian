@@ -8,6 +8,7 @@ import { puzzleIndex } from '../../core/daily';
 import { loadGame, saveGame, recordResult } from '../../core/storage';
 import { countryItems, countryName } from '../../core/countries';
 import { loadWorld, drawWorld } from '../../core/map';
+import { globeControls, zoomButtons } from '../../core/globe';
 import { flag, formatKm } from '../../core/geo';
 import { scoreRow, isSolved, solvedPrefix, windName, pad3, emojiRow, MAX_ROWS } from './logic';
 
@@ -30,7 +31,7 @@ const t = makeT({
     rhumb: 'With a constant compass heading instead (a rhumb line) you would have entered: {list}. Straight lines on a globe curve on a flat map.',
     solvedIn: 'Solved in {n}/6',
     lostTitle: 'The line went through',
-    dragHint: 'Drag the globe to look around',
+    dragHint: 'Drag the globe to look around, scroll or pinch to zoom',
     howIntro: 'Start at today\'s city and walk in a perfectly straight line (a great circle) in the given compass direction. Name the first five countries you enter, in order. The start country does not count.',
     howTiles: '🟩 right country, right position. 🟨 the line enters this country, but at another position. ⬛ not among the five.',
     howHint: 'After each guess the line on the globe grows up to the first country you have not found yet.',
@@ -49,7 +50,7 @@ const t = makeT({
     rhumb: 'Pusulayı hep aynı açıda tutsaydın (loksodrom) şu ülkelere girerdin: {list}. Kürede düz çizgiler düz haritada eğri görünür.',
     solvedIn: '{n}/6 tahminde bildin',
     lostTitle: 'Çizginin geçtiği ülkeler',
-    dragHint: 'Etrafa bakmak için küreyi sürükle',
+    dragHint: 'Etrafa bakmak için küreyi sürükle, yakınlaşmak için kaydır veya iki parmakla aç',
     howIntro: 'Günün şehrinden başla ve verilen pusula yönünde küre üzerinde dümdüz (büyük daire boyunca) yürü. Sırasıyla girdiğin ilk beş ülkeyi bul. Başlangıç ülkesi sayılmaz.',
     howTiles: '🟩 doğru ülke, doğru sıra. 🟨 çizgi bu ülkeye giriyor ama başka sırada. ⬛ beş ülke arasında değil.',
     howHint: 'Her tahminden sonra küredeki çizgi, henüz bulamadığın ilk ülkeye kadar uzar.',
@@ -114,8 +115,8 @@ const mode: ModeModule = {
         layer.append(tx);
       });
     };
-    const globe = h('div', { class: 'mapbox bl-globe', title: t('dragHint') }, svg);
-    enableDrag(svg, proj, drawGlobe);
+    const controls = globeControls(svg, proj, drawGlobe);
+    const globe = h('div', { class: 'mapbox bl-globe', title: t('dragHint') }, svg, zoomButtons(controls.zoomBy));
 
     // ----- board -----
     const board = h('div', { class: 'board', 'aria-live': 'polite' });
@@ -219,6 +220,7 @@ const mode: ModeModule = {
         // show the whole route
         const mid = p.path[Math.floor(p.path.length / 2)];
         centerOn(mid[0], mid[1]);
+        controls.reset();
         drawGlobe();
       }
     }
@@ -294,28 +296,4 @@ function visible(proj: GeoProjection, lon: number, lat: number): boolean {
   const r = Math.PI / 180;
   const cos = Math.sin(lat * r) * Math.sin(c[1] * r) + Math.cos(lat * r) * Math.cos(c[1] * r) * Math.cos((lon - c[0]) * r);
   return cos > 0;
-}
-
-function enableDrag(svg: SVGSVGElement, proj: GeoProjection, redraw: () => void) {
-  let start: { x: number; y: number; rot: [number, number, number] } | null = null;
-  let frame = 0;
-  svg.addEventListener('pointerdown', (e) => {
-    e.preventDefault(); // no text selection or image drag while turning the globe
-    start = { x: e.clientX, y: e.clientY, rot: proj.rotate() as [number, number, number] };
-    svg.setPointerCapture(e.pointerId);
-  });
-  svg.addEventListener('pointermove', (e) => {
-    if (!start) return;
-    // The globe is letterboxed inside the svg box, so its drawn size is the smaller side.
-    const box = svg.getBoundingClientRect();
-    const k = 180 / (proj.scale() * Math.PI) * (380 / Math.min(box.width, box.height));
-    const lon = start.rot[0] + (e.clientX - start.x) * k * 1.0;
-    const lat = Math.max(-80, Math.min(80, start.rot[1] - (e.clientY - start.y) * k));
-    proj.rotate([lon, lat, 0]);
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(redraw);
-  });
-  const end = () => { start = null; };
-  svg.addEventListener('pointerup', end);
-  svg.addEventListener('pointercancel', end);
 }

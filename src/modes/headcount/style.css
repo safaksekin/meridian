@@ -7,8 +7,6 @@
 
 .mode-headcount .hc-map { position: relative; height: clamp(250px, 62vw, 440px); user-select: none; -webkit-user-select: none; }
 .mode-headcount .hc-map .hc-svg { width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
-.mode-headcount .hc-zoom { position: absolute; right: 8px; top: 8px; display: grid; gap: 6px; }
-.mode-headcount .hc-zoom .icon-btn { min-width: 32px; height: 32px; padding: 0; opacity: 0.92; }
 
 .mode-headcount .hc-circle .hc-ring { fill-opacity: 0.16; stroke-width: 2; vector-effect: non-scaling-stroke; }
 .mode-headcount .hc-circle .hc-dot { stroke: none; }

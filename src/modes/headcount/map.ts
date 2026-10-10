@@ -3,6 +3,7 @@
 import { geoCircle, geoEquirectangular, geoPath } from 'd3-geo';
 import { drawWorld, loadWorld } from '../../core/map';
 import { h, svgEl } from '../../core/ui';
+import { zoomBtn, zoomButtons } from '../../core/globe';
 import { R_EARTH, type Grid } from './pop.js';
 import { t } from './strings';
 
@@ -58,19 +59,11 @@ export class HeadcountMap {
     this.circles = svgEl('g');
     this.preview = svgEl('g');
     this.labels = svgEl('g', { class: 'hc-labels' });
-    const zoomBtn = (txt: string, label: string, fn: () => void) =>
-      h('button', { class: 'icon-btn', type: 'button', 'aria-label': label, title: label, onclick: fn }, txt);
     this.el = h(
       'div',
       { class: 'mapbox hc-map' },
       this.svg,
-      h(
-        'div',
-        { class: 'hc-zoom' },
-        zoomBtn('+', t('zoomIn'), () => this.zoomBy(2)),
-        zoomBtn('−', t('zoomOut'), () => this.zoomBy(0.5)),
-        zoomBtn('⤢', t('reset'), () => this.fit()),
-      ),
+      zoomButtons((f) => this.zoomBy(f), zoomBtn('⤢', t('reset'), () => this.fit())),
     );
     this.ro = new ResizeObserver(() => this.resize());
     this.ro.observe(this.el);

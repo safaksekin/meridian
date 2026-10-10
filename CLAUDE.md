@@ -28,7 +28,7 @@ Vite 7 + TypeScript strict, vanilla DOM, d3-geo, topojson. Hash routing (`#/beel
 - `src/main.ts` router · `src/home/` home, header (`chrome.ts`), card art (`cardart.ts`)
 - `src/modes/<id>/` one folder per game (contract in `src/modes/types.ts`, guide in `docs/MODE_GUIDE.md`)
 - Theme: follows the device by default; the header switch (`themeToggle` in `src/home/chrome.ts`) stores `meridian:pref:theme` and sets `data-theme` on `<html>` (applied before first paint by the inline script in `index.html`). Hidden in game headers on phones (no room).
-- `src/core/` daily seed, storage/stats, i18n (TR/EN via `makeT`), UI kit, progression (`progress.ts`: XP/levels/streak from local stats), friend challenges (`challenge.ts`: `?ch=` share links)
+- `src/core/` daily seed, storage/stats, i18n (TR/EN via `makeT`), UI kit, globe controls (`globe.ts`: drag to turn, wheel / pinch / ± buttons to zoom; used by the Beeline globe and the Tripoint locator), progression (`progress.ts`: XP/levels/streak from local stats), friend challenges (`challenge.ts`: `?ch=` share links)
 - `scripts/build-<id>.mjs` pre-generate puzzles into `public/data/<id>/`; `scripts/build-images.mjs` (NASA PD / CC0 artwork via macOS `sips`); `scripts/build-art.mjs` (mental card SVG; tripoint card SVG = NASA base from build-images + real Natural Earth borders, frame in `scripts/lib/tripoint-card.mjs`)
 - `data-raw/` raw downloads (git-ignored): `npm run data:fetch`
 
@@ -43,7 +43,7 @@ npm run deploy:cf    # Cloudflare Pages copy (project meridian-geo) — not reac
 **Do not deploy after each task** (user, 2026-10-10): work is reviewed locally (`npm run dev`, keep it running and give the URL); run `npm run deploy` only when the user says "deploy", typically once at the end of the day for the whole batch. Committing and pushing to `main` stays the normal workflow (it does not change the live site). Commit messages end with the Co-Authored-By line from the system reminder.
 
 ## Testing in a real browser
-Verify UI changes in headless Chromium (Playwright) at 390 px and 1280–1440 px, light and dark, Turkish UI (`localStorage['meridian:pref:lang'] = '"tr"'`): no console errors, no horizontal overflow, play each touched mode to the end and reload (state must restore). Install Playwright in a temp folder, not in package.json.
+Verify UI changes in headless Chromium (Playwright; `npx playwright install` downloads the zip but hangs while unpacking it here: unzip `$TMPDIR/playwright-download-*/*.zip` into the temp folder and pass `executablePath`) at 390 px and 1280–1440 px, light and dark, Turkish UI (`localStorage['meridian:pref:lang'] = '"tr"'`): no console errors, no horizontal overflow, play each touched mode to the end and reload (state must restore). Install Playwright in a temp folder, not in package.json.
 
 ## Hosting facts
 - `*.pages.dev` and `*.workers.dev` do not load from the user's network in Turkey; `github.io` works. That's why GitHub Pages is primary.

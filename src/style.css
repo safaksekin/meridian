@@ -277,6 +277,9 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 /* Maps */
 .mapbox { width: 100%; border-radius: var(--radius); overflow: hidden; background: var(--sea); border: 1px solid var(--line); }
 .mapbox svg { display: block; width: 100%; height: auto; touch-action: none; }
+/* Zoom buttons in a map's corner (zoomButtons in core/globe.ts). */
+.map-zoom { position: absolute; right: 8px; top: 8px; display: grid; gap: 6px; }
+.map-zoom .icon-btn { min-width: 32px; height: 32px; padding: 0; opacity: 0.92; }
 .sphere { fill: var(--sea); stroke: var(--line); }
 .land { fill: var(--land); stroke: none; }
 .borders { fill: none; stroke: var(--land-stroke); stroke-width: 0.5; vector-effect: non-scaling-stroke; }

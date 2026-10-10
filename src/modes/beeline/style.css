@@ -18,7 +18,7 @@
 .mode-beeline .bl-ask { font-size: 0.88rem; }
 
 .mode-beeline .bl-globe {
-  flex: 0 1 min(380px, 100vw - 32px); min-height: 140px;
+  position: relative; flex: 0 1 min(380px, 100vw - 32px); min-height: 140px;
   background: var(--surface); box-shadow: var(--shadow); user-select: none; -webkit-user-select: none;
 }
 .mode-beeline .bl-globe svg { height: 100%; cursor: grab; }

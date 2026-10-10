@@ -1,5 +1,5 @@
 import './style.css';
-import { geoOrthographic } from 'd3-geo';
+import { geoDistance, geoOrthographic } from 'd3-geo';
 import type { ModeModule } from '../types';
 import { h, svgEl, autocomplete, keepOnScreen, resultPanel, toast } from '../../core/ui';
 import { makeT, lang } from '../../core/i18n';
@@ -9,6 +9,7 @@ import { loadGame, saveGame, recordResult } from '../../core/storage';
 import { country, countryName, countryItems } from '../../core/countries';
 import { flag } from '../../core/geo';
 import { loadWorld, drawWorld } from '../../core/map';
+import { globeControls } from '../../core/globe';
 import {
   MAX_GUESSES, marks, isWin, misses, hints, found, givenCountry, lockedSlots, shareText, bucket, pathOf, niceKm, type Mark,
 } from './logic';
@@ -200,9 +201,13 @@ function locator(P: Puzzle): SVGSVGElement {
   const proj = geoOrthographic().rotate([-P.lon, -P.lat * 0.6]).translate([50, 50]).scale(47).clipAngle(90);
   loadWorld()
     .then((w) => {
-      const { layer } = drawWorld(svg, proj, w, (c) => (P.codes.includes(c) ? 'var(--tp-globe-hi)' : null));
-      const p = proj([P.lon, P.lat]);
-      if (p) layer.append(svgEl('circle', { cx: p[0], cy: p[1], r: 4.5, class: 'tp-globe-dot' }));
+      const draw = () => {
+        const { layer } = drawWorld(svg, proj, w, (c) => (P.codes.includes(c) ? 'var(--tp-globe-hi)' : null));
+        const p = geoDistance([P.lon, P.lat], [-proj.rotate()[0], -proj.rotate()[1]]) < Math.PI / 2 ? proj([P.lon, P.lat]) : null;
+        if (p) layer.append(svgEl('circle', { cx: p[0], cy: p[1], r: 4.5, class: 'tp-globe-dot' }));
+      };
+      draw();
+      globeControls(svg, proj, draw);
     })
     .catch(() => svg.remove());
   return svg;

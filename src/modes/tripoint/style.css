@@ -110,6 +110,7 @@
 .mode-tripoint .tp-legend li { display: flex; align-items: center; gap: 6px; font-weight: 600; }
 .mode-tripoint .tp-sw { width: 14px; height: 14px; border-radius: var(--radius-xs); display: inline-block; flex: none; }
 .mode-tripoint .tp-where { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 12px; }
-.mode-tripoint .tp-globe { width: 84px; height: 84px; flex: none; }
+.mode-tripoint .tp-globe { width: 84px; height: 84px; flex: none; border-radius: 50%; cursor: grab; touch-action: none; }
+.mode-tripoint .tp-globe:active { cursor: grabbing; }
 .mode-tripoint .tp-globe-dot { fill: var(--tp-dot); stroke: var(--surface); stroke-width: 1.5; }
 .mode-tripoint .tp-attr { font-size: 0.72rem; color: var(--muted); text-align: center; margin: 10px 0 0; }
