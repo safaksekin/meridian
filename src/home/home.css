@@ -1,0 +1,80 @@
+/* ---------- per-mode accents (light, then dark) ---------- */
+.m-beeline { --c: #c0573a; }
+.m-streets { --c: #3c5f8a; }
+.m-mental { --c: #7b55b0; }
+.m-headcount { --c: #b07a1c; }
+.m-hinterland { --c: #4d7d3a; }
+.m-tripoint { --c: #1e7d7a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .m-beeline { --c: #ec9372; }
+  :root:not([data-theme='light']) .m-streets { --c: #8fb3e0; }
+  :root:not([data-theme='light']) .m-mental { --c: #b9a0e6; }
+  :root:not([data-theme='light']) .m-headcount { --c: #e6b660; }
+  :root:not([data-theme='light']) .m-hinterland { --c: #9bcb84; }
+  :root:not([data-theme='light']) .m-tripoint { --c: #72cbc7; }
+}
+:root[data-theme='dark'] .m-beeline { --c: #ec9372; }
+:root[data-theme='dark'] .m-streets { --c: #8fb3e0; }
+:root[data-theme='dark'] .m-mental { --c: #b9a0e6; }
+:root[data-theme='dark'] .m-headcount { --c: #e6b660; }
+:root[data-theme='dark'] .m-hinterland { --c: #9bcb84; }
+:root[data-theme='dark'] .m-tripoint { --c: #72cbc7; }
+
+/* ---------- hero ---------- */
+.home { max-width: 760px; }
+.home .hero { text-align: center; padding: 18px 0 6px; }
+.hero-mark { display: inline-grid; width: 44px; height: 44px; color: var(--text); }
+.hero-mark svg { width: 100%; height: 100%; }
+.home .hero h1 { font-size: clamp(2rem, 7vw, 2.8rem); letter-spacing: -0.045em; margin: 2px 0 0; line-height: 1.05; }
+.hero-tag { color: var(--muted); margin: 6px 0 0; }
+.hero-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 14px 0 0; padding: 0; list-style: none; }
+.hero-meta li {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--line); font-size: 0.8rem; color: var(--muted); white-space: nowrap;
+}
+.hero-meta li span[aria-hidden] { font-size: 0.85em; }
+.hero-count { color: var(--text); font-variant-numeric: tabular-nums; }
+
+/* ---------- 3 × 2 grid of square cards ---------- */
+.mgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
+.mcard {
+  --art-soft: color-mix(in srgb, var(--c) 13%, var(--surface));
+  position: relative; display: flex; flex-direction: column; align-items: center; text-align: center;
+  aspect-ratio: 1; padding: 12px 10px 12px; text-decoration: none; overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 7%, var(--surface)) 0%, var(--surface) 70%);
+  border: 1px solid color-mix(in srgb, var(--c) 22%, var(--line)); border-radius: 18px;
+  box-shadow: var(--shadow); transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.mcard:hover, .mcard:focus-visible {
+  transform: translateY(-2px); border-color: color-mix(in srgb, var(--c) 60%, var(--line));
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--c) 18%, transparent);
+}
+.mcard:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+.mcard-art { color: var(--c); width: 60%; aspect-ratio: 1; flex: none; display: grid; place-items: center; margin-top: 2px; }
+.mcard-art svg { width: 100%; height: 100%; max-height: 100%; }
+.mcard-name { font-weight: 750; font-size: 1rem; letter-spacing: -0.01em; line-height: 1.2; margin-top: auto; padding-top: 6px; }
+.mcard-blurb { color: var(--muted); font-size: 0.78rem; line-height: 1.3; margin-top: 3px; min-height: 2.6em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.mcard-status {
+  position: absolute; top: 9px; right: 9px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em;
+  padding: 3px 8px; border-radius: 999px; color: var(--c);
+  background: color-mix(in srgb, var(--c) 14%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c) 25%, transparent);
+}
+.mcard.is-won .mcard-status { color: #fff; background: var(--good); border-color: var(--good); }
+.mcard.is-lost .mcard-status { color: #fff; background: var(--bad); border-color: var(--bad); }
+.mcard.is-won, .mcard.is-lost { opacity: 0.92; }
+
+@media (max-width: 600px) {
+  .mgrid { gap: 8px; }
+  .mcard { padding: 10px 6px 9px; border-radius: 15px; }
+  .mcard-blurb { display: none; }
+  .mcard-name { font-size: 0.84rem; min-height: 2.4em; display: flex; align-items: center; justify-content: center; padding-top: 2px; }
+  .mcard-art { width: 64%; }
+  .mcard-status { top: 6px; right: 6px; font-size: 0.6rem; padding: 2px 6px; }
+}
+@media (max-width: 340px) {
+  .mgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mcard { transition: none; }
+  .mcard:hover { transform: none; }
+}

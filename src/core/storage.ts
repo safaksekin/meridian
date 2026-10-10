@@ -1,4 +1,6 @@
 // Per-viewer persistence in localStorage. Every access is guarded: the game must work without it.
+import { todayNumber } from './daily';
+
 const PREFIX = 'meridian:';
 
 function read<T>(key: string): T | null {
@@ -47,6 +49,7 @@ export function getStats(mode: string): ModeStats {
 /** Record a finished puzzle once. `bucket` feeds the distribution chart, `label` the home card. */
 export function recordResult(mode: string, day: number, won: boolean, bucket: string, label: string): ModeStats {
   const s = getStats(mode);
+  if (day !== todayNumber()) return s; // practice rounds on other days never touch stats or streaks
   if (s.history[day]) return s;
   s.played += 1;
   if (won) {
@@ -69,4 +72,13 @@ export function getPref(key: string): string | null {
 
 export function setPref(key: string, value: string): void {
   write(`pref:${key}`, value);
+}
+
+/** Forget a saved game so the puzzle can be played again (test mode). Stats are kept. */
+export function clearGame(mode: string, day: number): void {
+  try {
+    localStorage.removeItem(`${PREFIX}${mode}:day:${day}`);
+  } catch {
+    /* ignore */
+  }
 }

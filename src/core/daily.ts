@@ -5,12 +5,17 @@ function localMidnightUTC(d: Date): number {
   return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
-/** Day number (1-based) for the given local date. Supports ?day=N override for testing. */
+/** Real calendar day number (1-based) for the given local date, ignoring any override. */
+export function todayNumber(now = new Date()): number {
+  const epoch = Date.UTC(EPOCH.y, EPOCH.m - 1, EPOCH.d);
+  return Math.max(1, Math.round((localMidnightUTC(now) - epoch) / 86400000) + 1);
+}
+
+/** Puzzle day being played. Supports ?day=N override (test mode and debugging). */
 export function dayNumber(now = new Date()): number {
   const override = new URLSearchParams(location.search).get('day');
   if (override && /^\d+$/.test(override)) return Math.max(1, parseInt(override, 10));
-  const epoch = Date.UTC(EPOCH.y, EPOCH.m - 1, EPOCH.d);
-  return Math.max(1, Math.round((localMidnightUTC(now) - epoch) / 86400000) + 1);
+  return todayNumber(now);
 }
 
 /** Today's index into a pre-shuffled puzzle list of length n. */
