@@ -19,15 +19,14 @@ const MODE = 'beeline';
 const BUCKETS = ['1', '2', '3', '4', '5', '6', 'X'];
 const t = makeT({
   en: {
-    from: 'From',
-    head: 'head',
-    straight: 'and keep going in a perfectly straight line on the globe.',
-    which: 'Which 5 countries do you enter, in order?',
+    ask: 'Go dead straight. First 5 countries you enter, in order?',
     submit: 'Submit',
-    clear: 'Clear',
+    nth: 'Type country {n}…',
+    ready: 'Row full: submit',
+    remove: 'Remove {c}',
     fill: 'Fill all 5 slots',
+    full: 'Row full. Tap a slot to change it.',
     dupe: 'Each country only once per row',
-    start: 'You start in {c}. It does not count.',
     rhumb: 'With a constant compass heading instead (a rhumb line) you would have entered: {list}. Straight lines on a globe curve on a flat map.',
     solvedIn: 'Solved in {n}/6',
     lostTitle: 'The line went through',
@@ -39,15 +38,14 @@ const t = makeT({
     howCurve: 'Tip: on a globe, "due east" slowly bends towards the equator.',
   },
   tr: {
-    from: 'Başlangıç',
-    head: 'yön',
-    straight: 've küre üzerinde dümdüz ilerle.',
-    which: 'Sırasıyla hangi 5 ülkeye girersin?',
+    ask: 'Dümdüz git. Sırayla girdiğin ilk 5 ülke?',
     submit: 'Gönder',
-    clear: 'Temizle',
+    nth: '{n}. ülkeyi yaz…',
+    ready: 'Satır dolu: gönder',
+    remove: '{c} ülkesini çıkar',
     fill: '5 kutunun hepsini doldur',
+    full: 'Satır dolu. Değiştirmek için bir kutuya dokun.',
     dupe: 'Bir satırda her ülke bir kez',
-    start: 'Başlangıç ülken {c}. O sayılmaz.',
     rhumb: 'Pusulayı hep aynı açıda tutsaydın (loksodrom) şu ülkelere girerdin: {list}. Kürede düz çizgiler düz haritada eğri görünür.',
     solvedIn: '{n}/6 tahminde bildin',
     lostTitle: 'Çizginin geçtiği ülkeler',
@@ -77,10 +75,8 @@ const mode: ModeModule = {
     const prompt = h(
       'div',
       { class: 'bl-prompt' },
-      h('div', {}, `${t('from')} `, h('strong', {}, `${p.city} ${flag(p.cc)}`), `, ${t('head')} `,
-        h('span', { class: 'bl-bearing' }, needle, `${pad3(p.b)}° ${windName(p.b, lang)}`)),
-      h('div', { class: 'muted' }, t('straight')),
-      h('div', {}, h('strong', {}, t('which'))),
+      h('div', { class: 'bl-route' }, h('strong', {}, `${p.city} ${flag(p.cc)}`), h('span', { class: 'bl-bearing' }, needle, `${pad3(p.b)}° ${windName(p.b, lang)}`)),
+      h('div', { class: 'bl-ask muted' }, t('ask')),
     );
 
     // ----- globe -----
@@ -116,22 +112,21 @@ const mode: ModeModule = {
         layer.append(tx);
       });
     };
-    const globe = h('div', { class: 'mapbox bl-globe' }, svg);
+    const globe = h('div', { class: 'mapbox bl-globe', title: t('dragHint') }, svg);
     enableDrag(svg, proj, drawGlobe);
 
     // ----- board -----
     const board = h('div', { class: 'board', 'aria-live': 'polite' });
-    const actions = h('div', { class: 'bl-actions' });
-    const inputSlot = h('div');
-    const resultSlot = h('div');
+    const resultSlot = h('div', { class: 'bl-result' });
 
     const ac = autocomplete({
       items: () => countryItems((c) => c.c !== p.cc && !state.draft.includes(c.c)),
       placeholder: t('typeCountry'),
-      buttonLabel: '+',
+      bare: true,
+      onEmptySubmit: () => submit(),
       onPick: (item) => {
         const i = state.draft.indexOf(null);
-        if (i < 0) return toast(t('fill'));
+        if (i < 0) return toast(t('full'));
         state.draft[i] = item.id;
         save();
         render();
@@ -162,10 +157,17 @@ const mode: ModeModule = {
       }
       save();
       render();
+      // Phones: drop the keyboard so the globe and the new row are visible. Desktop: keep typing.
+      if (matchMedia('(pointer: coarse)').matches) (document.activeElement as HTMLElement | null)?.blur();
+      else if (!state.done) ac.focus();
     }
 
+    // Input and submit share one row right under the board, so they are always on screen.
+    const submitBtn = h('button', { class: 'btn primary bl-submit', type: 'button', onclick: submit });
+    const compose = h('div', { class: 'bl-compose' }, ac.el, submitBtn);
+
     function render() {
-      const rows = state.rows.map((r) => h('div', { class: 'bl-row' }, ...scoreRow(r, answer).map((tile, i) => cell(r[i], tile))));
+      const rows = state.rows.map((r) => h('div', { class: 'bl-row past' }, ...scoreRow(r, answer).map((tile, i) => cell(r[i], tile))));
       if (!state.done) {
         const next = state.draft.indexOf(null);
         rows.push(
@@ -173,7 +175,8 @@ const mode: ModeModule = {
             'div',
             { class: 'bl-row' },
             ...state.draft.map((d, i) => {
-              const el = cell(d, `slot ${d ? 'filled' : ''} ${i === next ? 'next' : ''}`, i);
+              const el = cell(d, `slot ${d ? 'filled' : ''} ${i === next ? 'cur' : ''}`, i);
+              if (d) el.title = t('remove', { c: countryName(d) });
               el.addEventListener('click', () => {
                 if (!state.draft[i]) return;
                 state.draft[i] = null;
@@ -184,19 +187,13 @@ const mode: ModeModule = {
             }),
           ),
         );
-        for (let i = state.rows.length + 1; i < MAX_ROWS; i++)
-          rows.push(h('div', { class: 'bl-row' }, ...[0, 1, 2, 3, 4].map(() => h('div', { class: 'bl-cell', style: { opacity: '0.35' } }))));
+        ac.setPlaceholder(next < 0 ? t('ready') : t('nth', { n: next + 1 }));
+        submitBtn.textContent = `${t('submit')} ${state.rows.length + 1}/${MAX_ROWS}`;
+        submitBtn.disabled = next >= 0;
       }
       board.replaceChildren(...rows);
-      inputSlot.replaceChildren(state.done ? '' : ac.el);
-      actions.replaceChildren(
-        ...(state.done
-          ? []
-          : [
-              h('button', { class: 'btn', onclick: () => { state.draft = answer.map((a, i) => (state.rows.some((r) => r[i] === a) ? a : null)); save(); render(); } }, t('clear')),
-              h('button', { class: 'btn primary', disabled: state.draft.some((d) => !d), onclick: submit }, t('submit')),
-            ]),
-      );
+      compose.hidden = state.done;
+      ctx.root.classList.toggle('bl-fit', !state.done);
       drawGlobe();
       if (state.done) {
         const won = isSolved(state.rows, answer);
@@ -224,15 +221,14 @@ const mode: ModeModule = {
       }
     }
 
-    ctx.root.append(
-      h('div', { class: 'panel' }, prompt, globe, h('p', { class: 'muted center', style: { fontSize: '0.8rem', margin: '0 0 6px' } }, `${t('start', { c: countryName(p.cc) })} · ${t('dragHint')}`)),
-      board,
-      inputSlot,
-      actions,
-      resultSlot,
-    );
+    // While playing, the mode is capped to the space left under the header so the globe shrinks
+    // instead of pushing the input off screen (see style.css).
+    const fit = () => ctx.root.style.setProperty('--bl-top', `${Math.round(ctx.root.getBoundingClientRect().top + window.scrollY)}px`);
+    ctx.root.append(h('div', { class: 'bl-side' }, prompt, board, compose), globe, resultSlot);
     render();
-    cleanup = () => {};
+    fit();
+    window.addEventListener('resize', fit);
+    cleanup = () => window.removeEventListener('resize', fit);
   },
   unmount() {
     cleanup?.();
@@ -290,7 +286,9 @@ function enableDrag(svg: SVGSVGElement, proj: GeoProjection, redraw: () => void)
   });
   svg.addEventListener('pointermove', (e) => {
     if (!start) return;
-    const k = 180 / (proj.scale() * Math.PI) * (380 / svg.getBoundingClientRect().width);
+    // The globe is letterboxed inside the svg box, so its drawn size is the smaller side.
+    const box = svg.getBoundingClientRect();
+    const k = 180 / (proj.scale() * Math.PI) * (380 / Math.min(box.width, box.height));
     const lon = start.rot[0] + (e.clientX - start.x) * k * 1.0;
     const lat = Math.max(-80, Math.min(80, start.rot[1] - (e.clientY - start.y) * k));
     proj.rotate([lon, lat, 0]);

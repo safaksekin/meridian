@@ -58,7 +58,11 @@ export function autocomplete(opts: {
   placeholder: string;
   onPick: (item: AutoItem) => void;
   buttonLabel?: string;
-}): { el: HTMLElement; focus: () => void; setDisabled: (d: boolean) => void } {
+  /** No built-in button: the host supplies its own controls. Enter still picks. */
+  bare?: boolean;
+  /** Enter pressed on an empty input (e.g. to submit a finished row). */
+  onEmptySubmit?: () => void;
+}): { el: HTMLElement; focus: () => void; setDisabled: (d: boolean) => void; setPlaceholder: (text: string) => void } {
   const input = h('input', {
     type: 'text',
     class: 'ac-input',
@@ -134,13 +138,14 @@ export function autocomplete(opts: {
   });
   input.addEventListener('blur', () => setTimeout(() => { matches = []; render(); }, 100));
 
-  const form = h('form', { class: 'ac' }, h('div', { class: 'ac-wrap' }, input, listEl), btn);
+  const form = h('form', { class: 'ac' }, h('div', { class: 'ac-wrap' }, input, listEl), opts.bare ? null : btn);
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (matches.length === 0) matches = search(input.value);
     const exact = matches.find((m) => m.keys.includes(fold(input.value)));
     const choice = exact ?? (matches.length === 1 ? matches[0] : matches[active]);
     if (choice && input.value.trim()) pick(choice);
+    else if (!input.value.trim() && opts.onEmptySubmit) opts.onEmptySubmit();
     else toast(input.value.trim() ? t('unknown') : t('typeCountry'));
   });
   listEl.hidden = true;
@@ -150,6 +155,9 @@ export function autocomplete(opts: {
     setDisabled: (d) => {
       input.disabled = d;
       btn.disabled = d;
+    },
+    setPlaceholder: (text) => {
+      input.placeholder = text;
     },
   };
 }
