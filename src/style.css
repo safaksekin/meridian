@@ -1,7 +1,8 @@
 :root {
   /* ===== Brand settings: the whole site follows these values =====
      Palette chosen by the user: https://colorhunt.co/palette/2373f4578ef565d0f4f2f7a0
-     (#2373f4 blue, #578ef5, #65d0f4 sky, #f2f7a0 lemon). The page and map tints below derive from it. */
+     (#2373f4 blue, #578ef5, #65d0f4 sky). Its fourth colour, the pale yellow #f2f7a0, is replaced by
+     white at the user's request. The page and map tints below derive from the blues. */
   --brand-light: #2373f4; /* brand colour on light backgrounds (white text sits on it) */
   --brand-dark: #65d0f4; /* brand colour on dark backgrounds (dark text sits on it) */
   --brand-ink: #1e62cf; /* the brand darkened to 4.5:1, for text and small marks on light backgrounds */
@@ -31,14 +32,15 @@
   --btn-primary-hover: var(--brand-strong);
   --btn-primary-text: var(--brand-text);
   --gold: #8f9614;
-  --gold-soft: #f7fac8;
+  --gold-soft: #ffffff;
+  --gold-tint: #ffffff; /* wash behind reward / challenge boxes: plain white in the light theme */
   --good: #2e7d32;
   --good-soft: #e5f2e3;
   --near: #d4a017;
   --bad: #8c99a8;
   --danger: #b4441c;
-  --land: #f2f7a0;
-  --land-stroke: #c5cb6a;
+  --land: #ffffff;
+  --land-stroke: #9db6de;
   --sea: #dff4fc;
   --ink: #1b1c18;
   --topo: rgba(20, 43, 78, 0.045);
@@ -68,6 +70,7 @@
   --navy-deep: #0e1d35;
   --gold: #f0c04a;
   --gold-soft: #3a2f12;
+  --gold-tint: color-mix(in srgb, var(--gold) 12%, var(--surface));
   --good: #4caf50;
   --good-soft: #15301c;
   --near: #e3b33c;
@@ -101,6 +104,7 @@
   --navy-deep: #0e1d35;
   --gold: #f0c04a;
   --gold-soft: #3a2f12;
+  --gold-tint: color-mix(in srgb, var(--gold) 12%, var(--surface));
   --good: #4caf50;
   --good-soft: #15301c;
   --near: #e3b33c;
