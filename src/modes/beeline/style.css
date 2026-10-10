@@ -82,3 +82,9 @@
   .mode-beeline .bl-row.past .bl-cell { height: 44px; }
   .mode-beeline .bl-result { grid-column: 1 / -1; width: 100%; max-width: 640px; justify-self: center; }
 }
+/* Roomy windows: the box is wider than the globe (space to grab and spin it), and both grow with the
+   window's height while the board stays on the first screen. */
+@media (min-width: 1180px) {
+  .mode-beeline { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); max-width: max(1100px, min(1400px, (100vh - 270px) * 2.3)); }
+  .mode-beeline .bl-globe { aspect-ratio: 5 / 4; max-height: clamp(440px, 100vh - 270px, 600px); padding: 10px; }
+}

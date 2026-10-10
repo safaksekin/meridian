@@ -40,8 +40,8 @@ const t = makeT({
     submit: 'Submit map',
     submitN: 'Place all 7 to submit',
     hintEmpty: 'Pick a country, then tap here',
-    hintPlace: 'Tap the canvas to place {name}',
-    hintMove: 'Tap the canvas to move {name}',
+    hintPlace: 'Tap the canvas to place it',
+    hintMove: 'Tap the canvas to move it',
     hintPick: 'Pick a country above',
     hintDone: 'All placed. Drag markers to fine-tune, then submit.',
     canvasLabel: 'Blank canvas. Place the countries where you think they are.',
@@ -89,8 +89,8 @@ const t = makeT({
     submit: 'Haritayı gönder',
     submitN: 'Göndermek için 7 ülkeyi de yerleştir',
     hintEmpty: 'Bir ülke seç, sonra buraya dokun',
-    hintPlace: '{name} için tuvale dokun',
-    hintMove: '{name} ülkesini taşımak için tuvale dokun',
+    hintPlace: 'Yerleştirmek için tuvale dokun',
+    hintMove: 'Taşımak için tuvale dokun',
     hintPick: 'Yukarıdan bir ülke seç',
     hintDone: 'Hepsi yerleşti. İşaretleri sürükleyip ince ayar yap, sonra gönder.',
     canvasLabel: 'Boş tuval. Ülkeleri olduklarını düşündüğün yere koy.',
@@ -290,8 +290,7 @@ async function mount(ctx: ModeContext) {
     board.classList.toggle('armed', !!selected && !state.done);
     hint.textContent = n === 0 ? t('hintEmpty') : '';
     hint.hidden = n > 0;
-    const name = selected ? `${flag(selected)} ${countryName(selected)}` : '';
-    status.textContent = state.done ? '' : selected ? t(state.pos[selected] ? 'hintMove' : 'hintPlace', { name }) : n === 7 ? t('hintDone') : t('hintPick');
+    status.textContent = state.done ? '' : selected ? t(state.pos[selected] ? 'hintMove' : 'hintPlace') : n === 7 ? t('hintDone') : t('hintPick');
     submit.hidden = state.done;
     submit.disabled = n < 7;
     submit.textContent = n < 7 ? t('submitN') : t('submit');

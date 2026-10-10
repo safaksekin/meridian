@@ -120,13 +120,17 @@ function drawView(view: View, kind: 'crop' | 'zoom', p: Puzzle): { svg: SVGSVGEl
   for (const poly of view.w) water.append(svgEl('path', { d: polyPath(poly), class: 'st-wpoly' }));
   if (view.wl.length) water.append(svgEl('path', { d: linesPath(view.wl), class: 'st-wline' }));
   g.append(water);
+  // Drawn like a street map: every road is a light line over a darker, wider casing (all casings first,
+  // so junctions stay open).
+  const roads = (layers: [string, string][]) => {
+    for (const pass of ['st-case', 'st-street'])
+      for (const [d, cls] of layers) g.append(svgEl('path', { d, class: `${pass}${cls ? ` ${cls}` : ''}` }));
+  };
   if (kind === 'crop') {
-    g.append(svgEl('path', { d: linesPath(p.r), class: 'st-street' }));
-    g.append(svgEl('path', { d: linesPath(p.m), class: 'st-street st-major' }));
+    roads([[linesPath(p.r), ''], [linesPath(p.m), 'st-major']]);
     g.append(svgEl('path', { d: linesPath(p.rl), class: 'st-rail' }));
   } else {
-    g.append(svgEl('path', { d: linesPath(p.z.m), class: 'st-street st-major' }));
-    g.append(svgEl('path', { d: linesPath(p.z.f), class: 'st-street st-fast' }));
+    roads([[linesPath(p.z.m), 'st-major'], [linesPath(p.z.f), 'st-fast']]);
     const c = p.s;
     g.append(svgEl('rect', { x: -c, y: -c, width: 2 * c, height: 2 * c, class: 'st-cropbox' }));
   }

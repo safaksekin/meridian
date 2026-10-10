@@ -2,7 +2,9 @@
   --st-water: #9fc4e4;
   --st-water-line: #7fb0dc;
   --st-rail: #b4542f;
-  --st-paper: #fbfaf6;
+  --st-land: #e2e8f0;
+  --st-road: #ffffff;
+  --st-case: #8d9db5;
   --st-rose: var(--accent);
 }
 @media (prefers-color-scheme: dark) {
@@ -10,14 +12,18 @@
     --st-water: #1f4a6e;
     --st-water-line: #2f6390;
     --st-rail: #e58a63;
-    --st-paper: #14181d;
+    --st-land: #18212e;
+    --st-road: #8494ad;
+    --st-case: #0b1119;
   }
 }
 :root[data-theme='dark'] .mode-streets {
   --st-water: #1f4a6e;
   --st-water-line: #2f6390;
   --st-rail: #e58a63;
-  --st-paper: #14181d;
+  --st-land: #18212e;
+  --st-road: #8494ad;
+  --st-case: #0b1119;
 }
 
 .mode-streets .st-panel { padding: 12px; }
@@ -28,7 +34,7 @@
 .mode-streets .st-mapwrap { position: relative; max-width: var(--fit, none); margin-inline: auto; }
 .mode-streets .st-map {
   position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden;
-  background: var(--st-paper); border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--st-land); border: 1px solid var(--line); border-radius: var(--radius);
 }
 .mode-streets .st-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .mode-streets .st-zoom { display: none; }
@@ -36,13 +42,25 @@
 .mode-streets .st-map.view-zoom .st-zoom { display: block; }
 
 
-.mode-streets .st-street {
-  fill: none; stroke: var(--ink); stroke-width: 0.8px; stroke-linecap: round; stroke-linejoin: round;
-  vector-effect: non-scaling-stroke; opacity: 0.9;
+/* Map look: land tint, light roads with a darker casing. */
+.mode-streets .st-street, .mode-streets .st-case {
+  fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke;
 }
-.mode-streets .st-street.st-major { stroke-width: 1.15px; opacity: 1; }
-.mode-streets .st-street.st-fast { stroke-width: 2px; }
-.mode-streets .st-zoom .st-street.st-major { stroke-width: 1px; }
+.mode-streets .st-case { stroke: var(--st-case); stroke-width: 2.6px; }
+.mode-streets .st-street { stroke: var(--st-road); stroke-width: 1.5px; }
+.mode-streets .st-case.st-major { stroke-width: 4.2px; }
+.mode-streets .st-street.st-major { stroke-width: 2.8px; }
+.mode-streets .st-zoom .st-case.st-major { stroke-width: 2.2px; }
+.mode-streets .st-zoom .st-street.st-major { stroke-width: 1.2px; }
+.mode-streets .st-zoom .st-case.st-fast { stroke-width: 4px; }
+.mode-streets .st-zoom .st-street.st-fast { stroke-width: 2.6px; }
+/* Phones: the same 3 km in fewer pixels, so thinner roads. */
+@media (max-width: 600px) {
+  .mode-streets .st-case { stroke-width: 2px; }
+  .mode-streets .st-street { stroke-width: 1.1px; }
+  .mode-streets .st-case.st-major { stroke-width: 3.2px; }
+  .mode-streets .st-street.st-major { stroke-width: 2.1px; }
+}
 .mode-streets .st-rail {
   fill: none; stroke: var(--st-rail); stroke-width: 1.4px; stroke-dasharray: 5 3;
   vector-effect: non-scaling-stroke; display: none;
@@ -79,7 +97,7 @@
   max-width: 100%;
 }
 .mode-streets .st-scale-label {
-  font-size: 0.7rem; font-weight: 700; color: var(--ink); background: color-mix(in srgb, var(--st-paper) 80%, transparent);
+  font-size: 0.7rem; font-weight: 700; color: var(--ink); background: color-mix(in srgb, var(--surface) 85%, transparent);
   padding: 0 3px; border-radius: var(--radius-xs); margin-top: 1px;
 }
 

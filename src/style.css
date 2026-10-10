@@ -353,9 +353,20 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 @media (prefers-reduced-motion: reduce) { .top-nav.ready .nav-ink { transition: none; } }
 .top-chip.streak { border-radius: 999px; gap: 4px; font-family: var(--font-sans); letter-spacing: 0; font-size: 0.8rem; }
 .top-chip .chev { opacity: 0.6; font-size: 1rem; line-height: 1; }
+/* Nickname button: person icon + the name (or "pick a name"). */
 .avatar {
-  width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--surface); cursor: pointer; font-weight: 800; color: #fff;
-  background: linear-gradient(135deg, var(--brand-light), color-mix(in srgb, var(--brand-light) 55%, var(--navy))); box-shadow: 0 0 0 1px var(--line-strong);
+  display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 13px 0 10px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--heading); font: 600 0.86rem/1 var(--font-sans);
 }
+.avatar:hover { border-color: var(--muted); }
+.avatar svg { width: 18px; height: 18px; flex: none; }
+.avatar-name { max-width: 10ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.avatar.unset { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+@media (max-width: 520px) {
+  .avatar { width: 36px; padding: 0; justify-content: center; }
+  .avatar-name { display: none; }
+}
+@media (max-width: 440px) { .avatar { width: 32px; height: 32px; } }
+.top .icon-btn { border-radius: 50%; }
 .lang-menu { border-radius: 999px; }
 @media (max-width: 860px) { .top-nav { display: none; } }

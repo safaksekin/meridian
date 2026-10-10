@@ -66,6 +66,7 @@ const CORE: Record<Lang, Dict> = {
     navRecords: 'Records',
     changeName: 'change name',
     setName: 'Set your explorer name',
+    pickName: 'Pick a name',
   },
   tr: {
     tagline: 'Her gün altı coğrafya bulmacası',
@@ -115,6 +116,7 @@ const CORE: Record<Lang, Dict> = {
     navRecords: 'Rekorlar',
     changeName: 'adını değiştir',
     setName: 'Kaşif adını belirle',
+    pickName: 'İsim seç',
   },
 };
 

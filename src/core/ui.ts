@@ -146,7 +146,7 @@ export function autocomplete(opts: {
     const choice = exact ?? (matches.length === 1 ? matches[0] : matches[active]);
     if (choice && input.value.trim()) pick(choice);
     else if (!input.value.trim() && opts.onEmptySubmit) opts.onEmptySubmit();
-    else toast(input.value.trim() ? t('unknown') : t('typeCountry'));
+    else toast(input.value.trim() ? t('unknown') : input.placeholder || t('typeCountry'));
   });
   listEl.hidden = true;
   return {

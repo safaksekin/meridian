@@ -29,6 +29,7 @@ function langMenu(onChange: () => void): HTMLElement {
 const line = (d: string) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const SUN = line('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>');
+const USER = line('<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>');
 const MOON = line('<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>');
 
 /** Light / dark switch. Without a choice the site follows the device (style.css); index.html applies a saved choice before first paint. */
@@ -149,9 +150,12 @@ function topNav(): HTMLElement {
 
 function avatar(): HTMLElement {
   const btn = h('button', { class: 'avatar', type: 'button' }) as HTMLButtonElement;
+  // A person icon with the name next to it (or "pick a name"); phones keep only the icon.
   const paint = () => {
-    const name = getNickname();
-    btn.textContent = name ? name.trim().charAt(0).toLocaleUpperCase(lang === 'tr' ? 'tr-TR' : 'en-GB') : '?';
+    const name = getNickname().trim();
+    btn.innerHTML = USER;
+    btn.append(h('span', { class: 'avatar-name' }, name || t('pickName')));
+    btn.classList.toggle('unset', !name);
     btn.title = name ? `${name} · ${t('changeName')}` : t('setName');
     btn.setAttribute('aria-label', btn.title);
   };
