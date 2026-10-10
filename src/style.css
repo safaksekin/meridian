@@ -215,10 +215,13 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 .tb-btn:hover { border-color: var(--muted); }
 @media (max-width: 600px) { .testbar { margin: 8px 12px 0; } }
 /* Wide screens: the visual on the left, prompt and controls stacked on the right, so nothing a
-   player needs is below the fold. Markup: .split > .split-pre, .split-visual, .split-post. */
+   player needs is below the fold. Markup: .split > .split-pre, .split-visual, .split-post.
+   The visual's frame grows with the window: --stage is the square the window's height leaves for it
+   (keepOnScreen in core/ui.ts trims it exactly), and the page is as wide as that square plus the controls. */
 @media (min-width: 900px) {
-  main.mode:has(> .split) { max-width: 1040px; }
-  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); grid-template-rows: auto 1fr; column-gap: 28px; align-items: start; }
+  main.mode { --stage: clamp(480px, 100vh - 170px, 920px); --side: clamp(360px, 26vw, 440px); }
+  main.mode:has(> .split) { max-width: calc(var(--stage) + var(--side) + 84px); }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, var(--side)); grid-template-rows: auto 1fr; column-gap: 28px; align-items: start; }
   .split > .split-visual { grid-column: 1; grid-row: 1 / 3; }
   .split > .split-pre { grid-column: 2; grid-row: 1; }
   .split > .split-post { grid-column: 2; grid-row: 2; }

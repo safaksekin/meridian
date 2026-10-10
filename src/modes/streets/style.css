@@ -42,25 +42,20 @@
 .mode-streets .st-map.view-zoom .st-zoom { display: block; }
 
 
-/* Map look: land tint, light roads with a darker casing. */
+/* Map look: land tint, light roads with a darker casing. Road widths follow the frame's size
+   (cqw = 1% of .st-map's width), so the crop reads the same on a phone and on a large monitor. */
+.mode-streets .st-map { container-type: inline-size; }
 .mode-streets .st-street, .mode-streets .st-case {
   fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke;
 }
-.mode-streets .st-case { stroke: var(--st-case); stroke-width: 2.6px; }
-.mode-streets .st-street { stroke: var(--st-road); stroke-width: 1.5px; }
-.mode-streets .st-case.st-major { stroke-width: 4.2px; }
-.mode-streets .st-street.st-major { stroke-width: 2.8px; }
-.mode-streets .st-zoom .st-case.st-major { stroke-width: 2.2px; }
-.mode-streets .st-zoom .st-street.st-major { stroke-width: 1.2px; }
-.mode-streets .st-zoom .st-case.st-fast { stroke-width: 4px; }
-.mode-streets .st-zoom .st-street.st-fast { stroke-width: 2.6px; }
-/* Phones: the same 3 km in fewer pixels, so thinner roads. */
-@media (max-width: 600px) {
-  .mode-streets .st-case { stroke-width: 2px; }
-  .mode-streets .st-street { stroke-width: 1.1px; }
-  .mode-streets .st-case.st-major { stroke-width: 3.2px; }
-  .mode-streets .st-street.st-major { stroke-width: 2.1px; }
-}
+.mode-streets .st-case { stroke: var(--st-case); stroke-width: clamp(1.9px, 0.54cqw, 5.5px); }
+.mode-streets .st-street { stroke: var(--st-road); stroke-width: clamp(1.1px, 0.31cqw, 3.4px); }
+.mode-streets .st-case.st-major { stroke-width: clamp(3px, 0.88cqw, 9px); }
+.mode-streets .st-street.st-major { stroke-width: clamp(2px, 0.58cqw, 6.4px); }
+.mode-streets .st-zoom .st-case.st-major { stroke-width: clamp(1.8px, 0.46cqw, 4.6px); }
+.mode-streets .st-zoom .st-street.st-major { stroke-width: clamp(1px, 0.25cqw, 2.6px); }
+.mode-streets .st-zoom .st-case.st-fast { stroke-width: clamp(3px, 0.83cqw, 8.4px); }
+.mode-streets .st-zoom .st-street.st-fast { stroke-width: clamp(2px, 0.54cqw, 5.6px); }
 .mode-streets .st-rail {
   fill: none; stroke: var(--st-rail); stroke-width: 1.4px; stroke-dasharray: 5 3;
   vector-effect: non-scaling-stroke; display: none;
