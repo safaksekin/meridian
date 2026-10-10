@@ -20,13 +20,13 @@
   border: 1px solid var(--line); background: var(--surface-2);
 }
 .cmp-vs-tag {
-  display: inline-block; font: 700 0.68rem/1 var(--font-mono, ui-monospace, monospace);
+  display: inline-block; font: 700 0.68rem/1 var(--font-label, ui-monospace, monospace);
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
 }
 .cmp-vs-line { margin: 6px 0 2px; font-size: 1.05rem; overflow-wrap: anywhere; }
-.cmp-vs-line b { font-family: var(--font-mono, ui-monospace, monospace); font-variant-numeric: tabular-nums; }
+.cmp-vs-line b { font-family: var(--font-label, ui-monospace, monospace); font-variant-numeric: tabular-nums; }
 .cmp-vs-sep { color: var(--muted); }
-.cmp-vs-verdict { margin: 4px 0 0; font: 700 1.25rem/1.3 var(--font-serif, Georgia, serif); overflow-wrap: anywhere; }
+.cmp-vs-verdict { margin: 4px 0 0; font: 700 1.25rem/1.3 var(--font-display, Georgia, serif); overflow-wrap: anywhere; }
 .cmp-vs.win { border-color: color-mix(in srgb, var(--gold, #d4a017) 60%, var(--line)); background: color-mix(in srgb, var(--gold, #d4a017) 12%, var(--surface)); }
 .cmp-vs.win .cmp-vs-verdict { color: color-mix(in srgb, var(--gold, #d4a017) 75%, var(--text)); }
 .cmp-vs.loss .cmp-vs-verdict { color: var(--muted); }
@@ -45,7 +45,7 @@
 
 .cmp-xp { width: 100%; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--line); }
 .cmp-xp.practice { margin: 6px 0 0; color: var(--muted); font-size: 0.85rem; }
-.cmp-xp-line { margin: 0; font: 700 0.8rem/1.4 var(--font-mono, ui-monospace, monospace); letter-spacing: 0.03em; }
+.cmp-xp-line { margin: 0; font: 700 0.8rem/1.4 var(--font-label, ui-monospace, monospace); letter-spacing: 0.03em; }
 .cmp-xp-gain { color: color-mix(in srgb, var(--gold, #d4a017) 80%, var(--text)); }
 .cmp-xp-up { color: var(--good); }
 .cmp-xp-bar { height: 6px; margin: 8px auto 6px; max-width: 320px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }

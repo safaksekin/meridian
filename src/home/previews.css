@@ -66,7 +66,7 @@
 .pv .pv-house { fill: var(--pv-bg, #0e1d35); stroke: var(--pv-ink, #e8edf6); stroke-width: 0.9px; stroke-linejoin: round; opacity: 0.85; }
 .pv .pv-name {
   fill: var(--pv-ink, #e8edf6);
-  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-family: 'Archivo', system-ui, sans-serif; font-stretch: 112%;
   font-weight: 700;
   font-style: italic;
   letter-spacing: 0.01em;
@@ -78,7 +78,7 @@
 .pv .pv-rule { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 0.8px; }
 .pv .pv-stamp-outer { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 1.2px; stroke-dasharray: 3 2; opacity: 0.9; }
 .pv .pv-stamp-inner { fill: color-mix(in srgb, var(--pv-accent, #f6be39) 8%, transparent); stroke: var(--pv-accent, #f6be39); stroke-width: 0.6px; opacity: 0.8; }
-.pv .pv-stamp-q { fill: var(--pv-accent, #f6be39); font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 22px; }
+.pv .pv-stamp-q { fill: var(--pv-accent, #f6be39); font-family: 'Archivo', system-ui, sans-serif; font-weight: 700; font-size: 22px; }
 
 /* tripoint */
 .pv .pv-disc { fill: color-mix(in srgb, var(--pv-accent2, #6ea0ff) 7%, var(--pv-bg, #0e1d35)); }
