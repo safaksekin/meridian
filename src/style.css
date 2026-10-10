@@ -1,7 +1,10 @@
 :root {
-  /* ===== Brand settings: the whole site follows these three values ===== */
-  --brand-light: #0b7c88; /* brand colour on light backgrounds (white text must stay readable on it) */
-  --brand-dark: #4ccad6; /* brand colour on dark backgrounds (dark text sits on it) */
+  /* ===== Brand settings: the whole site follows these values =====
+     Palette chosen by the user: https://colorhunt.co/palette/2373f4578ef565d0f4f2f7a0
+     (#2373f4 blue, #578ef5, #65d0f4 sky, #f2f7a0 lemon). The page and map tints below derive from it. */
+  --brand-light: #2373f4; /* brand colour on light backgrounds (white text sits on it) */
+  --brand-dark: #65d0f4; /* brand colour on dark backgrounds (dark text sits on it) */
+  --brand-ink: #1e62cf; /* the brand darkened to 4.5:1, for text and small marks on light backgrounds */
   --corner: 6px; /* corner sharpness: buttons and tiles use it as is, cards scale up from it */
 
   --brand: var(--brand-light);
@@ -12,31 +15,31 @@
   --radius: calc(var(--corner) * 5 / 3);
   --radius-lg: calc(var(--corner) * 7 / 3);
 
-  --bg: #eef1f3;
+  --bg: #eef5fe;
   --surface: #ffffff;
-  --surface-2: #f1f4f6;
+  --surface-2: #e7f0fd;
   --text: #1b1c18;
   --heading: #142b4e;
   --muted: #5a6575;
-  --line: #dde3e8;
-  --line-strong: #c3ccd5;
-  --accent: var(--brand);
-  --accent-text: var(--brand-text);
+  --line: #d3e1f7;
+  --line-strong: #b4caee;
+  --accent: var(--brand-ink);
+  --accent-text: #ffffff;
   --navy: #142b4e;
   --navy-deep: #0e1d35;
   --btn-primary: var(--brand);
   --btn-primary-hover: var(--brand-strong);
   --btn-primary-text: var(--brand-text);
-  --gold: #c99510;
-  --gold-soft: #fdf3d6;
+  --gold: #8f9614;
+  --gold-soft: #f7fac8;
   --good: #2e7d32;
   --good-soft: #e5f2e3;
   --near: #d4a017;
   --bad: #8c99a8;
   --danger: #b4441c;
-  --land: #dfe5e3;
-  --land-stroke: #b9c4c4;
-  --sea: #f3f6f8;
+  --land: #f2f7a0;
+  --land-stroke: #c5cb6a;
+  --sea: #dff4fc;
   --ink: #1b1c18;
   --topo: rgba(20, 43, 78, 0.045);
   --shadow: 0 1px 2px rgba(20, 43, 78, 0.04), 0 2px 8px rgba(20, 43, 78, 0.05);
@@ -59,6 +62,8 @@
   --brand: var(--brand-dark);
   --brand-text: #0a1424;
   --brand-strong: color-mix(in srgb, var(--brand) 80%, #fff);
+  --accent: var(--brand);
+  --accent-text: var(--brand-text);
   --navy: #142b4e;
   --navy-deep: #0e1d35;
   --gold: #f0c04a;
@@ -90,6 +95,8 @@
   --brand: var(--brand-dark);
   --brand-text: #0a1424;
   --brand-strong: color-mix(in srgb, var(--brand) 80%, #fff);
+  --accent: var(--brand);
+  --accent-text: var(--brand-text);
   --navy: #142b4e;
   --navy-deep: #0e1d35;
   --gold: #f0c04a;
@@ -198,14 +205,6 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 }
 .tb-btn:hover { border-color: var(--muted); }
 @media (max-width: 600px) { .testbar { margin: 8px 12px 0; } }
-/* Test mode only: try the brand colour candidates on the real pages. */
-.tb-brands { display: flex; align-items: center; gap: 6px; }
-.tb-swatch { width: 22px; height: 22px; padding: 0; border-radius: 50%; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--line-strong); cursor: pointer; }
-.tb-swatch[aria-pressed='true'] { box-shadow: 0 0 0 2px var(--text); }
-:root[data-brand='blue'] { --brand-light: #2864dc; --brand-dark: #6ea0ff; }
-:root[data-brand='green'] { --brand-light: #1f7a4d; --brand-dark: #56c98b; }
-:root[data-brand='orange'] { --brand-light: #c2500f; --brand-dark: #ff9a52; }
-
 /* Mode layout */
 .day-label { text-align: center; color: var(--muted); margin: 4px 0 12px; font: 700 0.72rem/1.3 var(--font-label); letter-spacing: 0.12em; text-transform: uppercase; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }

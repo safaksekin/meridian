@@ -18,7 +18,8 @@ Meridian: a free, static, daily geography puzzle site with six modes. Live at ht
 - **Zero cost.** Static hosting only, open data, no paid APIs, no backend. No surprise bills — never add Workers/Functions or paid services without asking.
 - **No fake data.** No invented player counts or leaderboards. A real global leaderboard needs a backend: user decision, not built.
 - **Practical, single-screen, short games.** Multi-round formats and film/TV themes were rejected; Turkey-only scope rejected (global audience).
-- **Brand tokens:** colour and corner sharpness are set once at the top of `src/style.css` (`--brand-light`, `--brand-dark`, `--corner`); everything else derives from them (`--brand`, `--accent`, `--btn-primary`, `--radius-xs/sm/-/lg`). Never hard-code a brand colour or a `border-radius` in px. User likes the current sharpness (`--corner: 6px`).
+- **Brand palette (user's choice, 2026-10-10):** https://colorhunt.co/palette/2373f4578ef565d0f4f2f7a0 — blue `#2373f4` (brand), sky `#65d0f4` (brand in dark theme), lemon `#f2f7a0` (land on maps, chips), plus blue-tinted page background and lines. The game feedback colours (green / yellow / gray tiles, orange route line) and navy ink are separate and stay. The test-bar palette picker is gone.
+- **Brand tokens:** colour and corner sharpness are set once at the top of `src/style.css` (`--brand-light`, `--brand-dark`, `--brand-ink`, `--corner`); everything else derives from them (`--brand`, `--accent`, `--btn-primary`, `--radius-xs/sm/-/lg`). Never hard-code a brand colour or a `border-radius` in px. User likes the current sharpness (`--corner: 6px`).
 - **Design:** home follows the user's own reference (photo cards, relief-map hero, nav). User REJECTED Playfair Display + Space Mono ("AI slop"); current type is Archivo (expanded heavy headings) + Archivo Narrow (labels). Ivory vs. cool-gray background: user doesn't mind. Daily-changing card art is unnecessary. Phones: cards stay 3 × 2.
 
 ## Stack & layout
@@ -49,7 +50,6 @@ Verify UI changes in headless Chromium (Playwright) at 390 px and 1280–1440 px
 
 ## Current state (2026-10-10)
 - All six modes done, browser-tested, live. `TEST_MODE = true` in `src/core/config.ts` (daily limit off, test toolbar with prev/next/random/replay; practice rounds never touch stats). **Set to false before public launch.**
-- Brand colour is **undecided**: default is turquoise (my recommendation), and the test bar on the home page has four swatches (turquoise / blue / green / orange, `BRANDS` in `src/home/chrome.ts` + `:root[data-brand=…]` in `src/style.css`) so the user can compare on the live site. Once they choose: put the two values in `--brand-light` / `--brand-dark` and delete the picker and the overrides.
 - Share texts use English brand names ("Meridian Beeline #12") in both languages, by design.
 
 ## Next steps / open items

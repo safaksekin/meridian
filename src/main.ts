@@ -6,7 +6,7 @@ import { lang, t } from './core/i18n';
 import { h, modal } from './core/ui';
 import { getPref, setPref } from './core/storage';
 import { loadCountries } from './core/countries';
-import { applyTestBrand, header, testBar } from './home/chrome';
+import { header, testBar } from './home/chrome';
 import { renderHome } from './home/home';
 import { challengeBanner } from './core/challenge';
 
@@ -48,6 +48,5 @@ async function route() {
   }
 }
 
-applyTestBrand();
 window.addEventListener('hashchange', route);
 route();
