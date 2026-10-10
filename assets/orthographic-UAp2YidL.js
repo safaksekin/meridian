@@ -1,0 +1,1 @@
+import{p as n,e as s,o as t,i as e,s as r}from"./map-Clv3j1T2.js";import{a as p}from"./azimuthal-BsW-obd1.js";function a(i,o){return[e(o)*r(i),r(o)]}a.invert=p(t);function h(){return n(a).scale(249.5).clipAngle(90+s)}export{h as g};

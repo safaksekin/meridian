@@ -1,0 +1,37 @@
+[
+ {
+  "id": "hero-europe",
+  "licence": "Public domain (NASA Blue Marble Next Generation)",
+  "page": "https://visibleearth.nasa.gov/images/73751/july-blue-marble-next-generation-w-topography-and-bathymetry"
+ },
+ {
+  "id": "card-beeline",
+  "licence": "Public domain (NASA, via Wikimedia Commons)",
+  "page": "https://commons.wikimedia.org/wiki/File:Europe_satellite_orthographic.jpg"
+ },
+ {
+  "id": "card-streets",
+  "licence": "CC0 (Unsplash, via Wikimedia Commons)",
+  "page": "https://commons.wikimedia.org/wiki/File:Drone_aerial_view_of_Les_Vans_(Unsplash).jpg"
+ },
+ {
+  "id": "card-headcount",
+  "licence": "Public domain (NASA Black Marble, via Wikimedia Commons)",
+  "page": "https://commons.wikimedia.org/wiki/File:Black_Marble_-_Africa,_Europe,_and_the_Middle_East_(8247962102).jpg"
+ },
+ {
+  "id": "card-hinterland",
+  "licence": "CC0 (Unsplash, via Wikimedia Commons)",
+  "page": "https://commons.wikimedia.org/wiki/File:European_village_(Unsplash).jpg"
+ },
+ {
+  "id": "card-tripoint",
+  "licence": "Public domain (NASA Blue Marble, via NASA GIBS)",
+  "page": "https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api"
+ },
+ {
+  "id": "photo-barcelona",
+  "licence": "Public domain (NASA, ISS crew photograph, via Wikimedia Commons)",
+  "page": "https://commons.wikimedia.org/wiki/File:Barcelona,_Spain%27s_second_most-populous_city,_is_pictured_from_the_International_Space_Station.jpg"
+ }
+]

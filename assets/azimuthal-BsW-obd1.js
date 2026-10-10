@@ -1,0 +1,1 @@
+import{f,o as e,s as c,h as m,i as u}from"./map-Clv3j1T2.js";function v(s){return function(n,a){var r=u(n),i=u(a),t=s(r*i);return t===1/0?[2,0]:[t*i*c(n),t*c(a)]}}function z(s){return function(n,a){var r=m(n*n+a*a),i=s(r),t=c(i),o=u(i);return[f(n*t,r*o),e(r&&a*t/r)]}}export{z as a,v as b};
