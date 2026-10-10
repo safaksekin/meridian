@@ -229,7 +229,6 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 }
 
 /* Mode layout */
-.day-label { text-align: center; color: var(--muted); margin: 4px 0 12px; font: 700 0.72rem/1.3 var(--font-label); letter-spacing: 0.12em; text-transform: uppercase; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
 .prompt { text-align: center; margin: 4px 0 12px; }
 .prompt strong { font: 700 1.35rem/1.25 var(--font-display); color: var(--heading); }
@@ -342,7 +341,7 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 
 /* Display type: Archivo, expanded and heavy (set after any `font` shorthand, which resets stretch). */
 .brand-name, .prompt strong, .stat strong, .result h2, .modal-head h2 { font-stretch: 112%; font-weight: 800; letter-spacing: -0.02em; }
-.kicker, .day-label, .top-chip, .countdown, .share-preview, .mono { letter-spacing: 0.06em; }
+.kicker, .top-chip, .countdown, .share-preview, .mono { letter-spacing: 0.06em; }
 
 /* Header nav + avatar */
 .top { gap: 12px; }

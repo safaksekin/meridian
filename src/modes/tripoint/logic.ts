@@ -27,11 +27,11 @@ export function misses(guesses: string[][], answer: string[]): number {
 }
 
 /**
- * Hint layers unlocked after `missCount` wrong guesses:
- * 1 coastlines + lakes, 2 rivers, 3 wider view (500 km) and one missing country named.
+ * Hints unlocked after `missCount` wrong guesses:
+ * 1 lakes + rivers, 2 wider view (500 km), 3 one missing country named.
  */
 export function hints(missCount: number) {
-  return { coast: missCount >= 1, rivers: missCount >= 2, wide: missCount >= 3, give: missCount >= 3 };
+  return { water: missCount >= 1, wide: missCount >= 2, give: missCount >= 3 };
 }
 
 /** Answer countries the player has already found. */

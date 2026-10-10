@@ -17,9 +17,6 @@ const t = makeT({
     navDaily: 'Daily challenge',
     navRecords: 'Records',
     photoCaption: 'Barcelona from the International Space Station',
-    easy: 'Easy',
-    medium: 'Medium',
-    hard: 'Hard',
     credits: 'Images: NASA (public domain), Unsplash contributors (CC0) via Wikimedia Commons.',
     start: "Start today's puzzles",
     allDone: 'All six done. See your record',
@@ -37,7 +34,6 @@ const t = makeT({
     completed: 'Completed',
     play: 'Play',
     review: 'Review',
-    min: '~{n} min',
     difficulty: 'Difficulty',
     profileKicker: 'Explorer profile',
     level: 'Level {n}',
@@ -82,9 +78,6 @@ const t = makeT({
     navDaily: 'Günlük meydan okuma',
     navRecords: 'Rekorlar',
     photoCaption: 'Uluslararası Uzay İstasyonu’ndan Barselona',
-    easy: 'Kolay',
-    medium: 'Orta',
-    hard: 'Zor',
     credits: 'Görseller: NASA (kamu malı), Unsplash katkıcıları (CC0), Wikimedia Commons üzerinden.',
     start: 'Bugünün oyunlarına başla',
     allDone: 'Altısı da bitti. Rekorlarına bak',
@@ -102,7 +95,6 @@ const t = makeT({
     completed: 'Tamamlandı',
     play: 'Oyna',
     review: 'İncele',
-    min: '~{n} dk',
     difficulty: 'Zorluk',
     profileKicker: 'Kaşif profili',
     level: 'Seviye {n}',
@@ -140,17 +132,6 @@ const t = makeT({
     cat_tripoint: 'Sınır coğrafyası',
   },
 });
-
-/** Typical play time (minutes) and difficulty (1–3) per mode, shown on cards. */
-const META: Record<string, { min: number; diff: 1 | 2 | 3 }> = {
-  beeline: { min: 3, diff: 2 },
-  streets: { min: 3, diff: 3 },
-  mental: { min: 2, diff: 2 },
-  headcount: { min: 3, diff: 1 },
-  hinterland: { min: 2, diff: 2 },
-  tripoint: { min: 2, diff: 3 },
-};
-const DIFF_LABEL = ['', 'easy', 'medium', 'hard'];
 
 const NS = () => (lang === 'tr' ? ['K', 'G'] : ['N', 'S']);
 const EW = () => (lang === 'tr' ? ['D', 'B'] : ['E', 'W']);
@@ -215,13 +196,8 @@ function heroArt(): HTMLElement {
 }
 
 // ---------------------------------------------------------------- cards
-function pips(n: number): HTMLElement {
-  return h('span', { class: 'pips', 'aria-hidden': 'true' }, ...[1, 2, 3, 4].map((i) => h('i', { class: i <= n + 1 ? 'on' : '' })));
-}
-
 function card(m: (typeof MODES)[number], day: number): HTMLElement {
   const res = getStats(m.id).history[day];
-  const meta = META[m.id];
   const media = h('div', { class: `mc-media mc-${m.id}` });
   media.innerHTML = `<img src="${IMG[m.id]}" alt="" loading="lazy" width="800" height="500">${OVERLAYS[m.id] ?? ''}`;
   media.append(h('span', { class: 'mc-tag' }, t(`cat_${m.id}`)));
@@ -241,13 +217,7 @@ function card(m: (typeof MODES)[number], day: number): HTMLElement {
         { class: 'mc-text' },
         h('h3', { class: 'mc-title' }, m.name[lang]),
         h('p', { class: 'mc-blurb' }, m.blurb[lang]),
-        h(
-          'div',
-          { class: 'mc-meta' },
-          pips(meta.diff),
-          h('span', {}, t(DIFF_LABEL[meta.diff])),
-          res ? h('span', { class: `mc-score ${res.won ? 'won' : 'lost'}` }, res.label) : h('span', { class: 'mc-time' }, t('min', { n: meta.min })),
-        ),
+        res ? h('div', { class: 'mc-meta' }, h('span', { class: `mc-score ${res.won ? 'won' : 'lost'}` }, res.label)) : null,
       ),
       h('span', { class: 'mc-go', 'aria-hidden': 'true' }, '→'),
     ),

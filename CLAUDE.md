@@ -9,10 +9,10 @@ Meridian: a free, static, daily geography puzzle site with six modes. Live at ht
 |---|---|---|
 | beeline | Düz Çizgi | Start city + bearing; name the first 5 countries a great circle enters (Wordle tiles, 6 rows) |
 | streets | Sokak İzi | Guess the city from a rotated 3 km OSM street crop; hints unlock per miss |
-| mental | Zihin Haritası | Place 7 countries on a blank canvas; Procrustes fit; bias readout (tilt, N–S squash) |
+| mental | Zihin Haritası | Place the shapes of 7 countries on a blank canvas (one scale; the picked shape follows the pointer, `pieces.ts`); Procrustes fit; bias readout (tilt, N–S squash) |
 | headcount | Nüfus Çemberi | Drop a circle of radius R holding the target population (GHSL grid), 3 tries |
 | hinterland | Taşra | Guess the country from village names (ambiguous → giveaway order) |
-| tripoint | Üçlü Nokta | Border lines meeting at a tripoint; name the 3 countries, 4 tries |
+| tripoint | Üçlü Nokta | Map around a tripoint, every country in its own colour, no names; name the 3 that meet, 4 tries (hints: lakes + rivers, 500 km view, one country named) |
 
 ## Hard rules (from the user)
 - **Zero cost.** Static hosting only, open data, no paid APIs, no backend. No surprise bills — never add Workers/Functions or paid services without asking.
@@ -21,7 +21,7 @@ Meridian: a free, static, daily geography puzzle site with six modes. Live at ht
 - **Brand palette (user's choice, 2026-10-10):** https://colorhunt.co/palette/2373f4578ef565d0f4f2f7a0 — blue `#2373f4` (brand), sky `#65d0f4` (brand in dark theme), plus blue-tinted page background and lines. The palette's pale yellow `#f2f7a0` was **rejected: the user wants white instead** (land on maps, streak / XP chips, reward and challenge boxes are white in the light theme; no pale-yellow fills). The game feedback colours (green / yellow / gray tiles, orange route line) and navy ink are separate and stay. The test-bar palette picker is gone.
 - **Brand tokens:** colour and corner sharpness are set once at the top of `src/style.css` (`--brand-light`, `--brand-dark`, `--brand-ink`, `--corner`); everything else derives from them (`--brand`, `--accent`, `--btn-primary`, `--radius-xs/sm/-/lg`). Never hard-code a brand colour or a `border-radius` in px. User likes the current sharpness (`--corner: 6px`).
 - **No glow or light effects (product rule, user, 2026-10-10).** Nowhere on the site, in CSS or in generated artwork: no glowing halos (coloured or light `box-shadow` / `drop-shadow`), no radial "spotlight" gradients, neon, shine, bloom or pulsing-light animations. Plain dark drop shadows for depth and crisp focus rings are fine.
-- **Design:** home follows the user's own reference (photo cards, relief-map hero, nav). User REJECTED Playfair Display + Space Mono ("AI slop"); current type is Archivo (expanded heavy headings) + Archivo Narrow (labels). Ivory vs. cool-gray background: user doesn't mind. Daily-changing card art is unnecessary. Phones: cards stay 3 × 2.
+- **Design:** home follows the user's own reference (photo cards, relief-map hero, nav). User REJECTED Playfair Display + Space Mono ("AI slop"); current type is Archivo (expanded heavy headings) + Archivo Narrow (labels). Ivory vs. cool-gray background: user doesn't mind. Daily-changing card art is unnecessary. Phones: cards stay 3 × 2. Cards show no difficulty or play time, and a game shows no "name #day" line above it (user removed both, 2026-10-10).
 
 ## Stack & layout
 Vite 7 + TypeScript strict, vanilla DOM, d3-geo, topojson. Hash routing (`#/beeline`).

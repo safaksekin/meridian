@@ -36,7 +36,7 @@ async function route() {
     mod = (await def.load()).default;
     if (location.hash.replace(/^#\/?/, '') !== id) return; // user navigated away while loading
     current = mod;
-    root.replaceChildren(h('p', { class: 'day-label' }, `${def.icon} ${def.name[lang]} #${day}`));
+    root.replaceChildren();
     await mod.mount({ day, root });
     if (!getPref(`seen:${def.id}`)) {
       setPref(`seen:${def.id}`, '1');

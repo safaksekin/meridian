@@ -10,6 +10,7 @@ import { flag, formatKm } from '../../core/geo';
 import { drawWorld, loadWorld } from '../../core/map';
 import { applySim, band, compass, evaluate, invertSim, type Evaluation, type Pt } from './fit';
 import { projectAll, setProjection } from './project';
+import { makePieces, RING } from './pieces';
 
 const MODE = 'mental';
 const SIZE = 1000; // canvas units (viewBox) on each side
@@ -39,11 +40,11 @@ const t = makeT({
     placed: 'Placed {n}/7',
     submit: 'Submit map',
     submitN: 'Place all 7 to submit',
-    hintEmpty: 'Pick a country, then tap here',
+    hintEmpty: 'Pick a country, then drop its shape here',
     hintPlace: 'Tap the canvas to place it',
     hintMove: 'Tap the canvas to move it',
     hintPick: 'Pick a country above',
-    hintDone: 'All placed. Drag markers to fine-tune, then submit.',
+    hintDone: 'All placed. Drag the countries to fine-tune, then submit.',
     canvasLabel: 'Blank canvas. Place the countries where you think they are.',
     score: 'Score',
     h90: 'Cartographer brain!',
@@ -66,13 +67,13 @@ const t = makeT({
     d5: 'south-west',
     d6: 'west',
     d7: 'north-west',
-    legend: 'Green dots: true positions, after rotating and scaling the real map to fit yours best.',
+    legend: 'Dashed outlines: where you put each country. Green dots: the true positions, after rotating and scaling the real map to fit yours best.',
     shareScore: 'Score',
     shareTilt: 'tilt',
     shareNS: 'N–S',
     attrib: 'Map: Natural Earth (public domain).',
-    how1: 'Place seven countries on a blank canvas from memory. No map, no grid, no north arrow.',
-    how2: 'Tap a name, then tap the canvas. Drag a marker to adjust it. When all seven are placed, submit.',
+    how1: 'Place the shapes of seven countries on a blank canvas from memory. No map, no grid. All shapes are drawn at the same scale, north up.',
+    how2: 'Pick a name: the country\'s shape follows your pointer. Tap the canvas to drop it, drag it to adjust. When all seven are placed, submit.',
     how3: 'Only the shape of your map matters: we slide, scale and rotate the real map until it fits yours best, then measure how far each country is off in km.',
     howEx: 'Example: Spain, Finland and Greece. Put Spain bottom-left, Finland top-right, Greece bottom-right. Even if your whole map is tilted 10° and fills the canvas, only the leftover errors count. Afterwards you learn your bias, e.g. “you turn the world 9° clockwise and squash it north–south by 18%”.',
   },
@@ -88,11 +89,11 @@ const t = makeT({
     placed: 'Yerleşen {n}/7',
     submit: 'Haritayı gönder',
     submitN: 'Göndermek için 7 ülkeyi de yerleştir',
-    hintEmpty: 'Bir ülke seç, sonra buraya dokun',
+    hintEmpty: 'Bir ülke seç, sonra şeklini buraya bırak',
     hintPlace: 'Yerleştirmek için tuvale dokun',
     hintMove: 'Taşımak için tuvale dokun',
     hintPick: 'Yukarıdan bir ülke seç',
-    hintDone: 'Hepsi yerleşti. İşaretleri sürükleyip ince ayar yap, sonra gönder.',
+    hintDone: 'Hepsi yerleşti. Ülkeleri sürükleyip ince ayar yap, sonra gönder.',
     canvasLabel: 'Boş tuval. Ülkeleri olduklarını düşündüğün yere koy.',
     score: 'Puan',
     h90: 'Kartograf beyni!',
@@ -115,13 +116,13 @@ const t = makeT({
     d5: 'güneybatı',
     d6: 'batı',
     d7: 'kuzeybatı',
-    legend: 'Yeşil noktalar: gerçek harita seninkine en iyi oturacak şekilde döndürülüp ölçeklendikten sonraki gerçek konumlar.',
+    legend: 'Kesikli çizgiler: ülkeleri koyduğun yerler. Yeşil noktalar: gerçek harita seninkine en iyi oturacak şekilde döndürülüp ölçeklendikten sonraki gerçek konumlar.',
     shareScore: 'Puan',
     shareTilt: 'eğim',
     shareNS: 'K–G',
     attrib: 'Harita: Natural Earth (kamu malı).',
-    how1: 'Yedi ülkeyi boş bir tuvale ezberden yerleştir. Harita yok, ızgara yok, kuzey oku yok.',
-    how2: 'Bir ada dokun, sonra tuvale dokun. Ayarlamak için işareti sürükle. Yedisi de yerleşince gönder.',
+    how1: 'Yedi ülkenin şeklini boş bir tuvale ezberden yerleştir. Harita yok, ızgara yok. Bütün şekiller aynı ölçekte ve kuzey yukarıda.',
+    how2: 'Bir ülke adı seç: ülkenin şekli imlecinle birlikte hareket eder. Bırakmak için tuvale dokun, ayarlamak için sürükle. Yedisi de yerleşince gönder.',
     how3: 'Yalnızca haritanın şekli önemli: gerçek haritayı seninkine en iyi oturana dek kaydırır, ölçekler ve döndürürüz; sonra her ülkenin kaç km şaştığını ölçeriz.',
     howEx: 'Örnek: İspanya, Finlandiya ve Yunanistan. İspanya’yı sol alta, Finlandiya’yı sağ üste, Yunanistan’ı sağ alta koy. Haritan 10° eğik olsa ve tüm tuvali kaplasa bile yalnızca kalan hatalar sayılır. Sonunda eğilimini öğrenirsin, ör. “dünyayı saat yönünde 9° döndürüp kuzey–güney yönünde %18 basıklaştırıyorsun”.',
   },
@@ -139,9 +140,10 @@ const clamp = (v: number) => Math.max(0, Math.min(SIZE, v));
 let cleanup: (() => void) | null = null;
 
 async function mount(ctx: ModeContext) {
-  const sets = await loadJSON<PuzzleSet[]>('mental/sets.json');
+  const [sets, world] = await Promise.all([loadJSON<PuzzleSet[]>('mental/sets.json'), loadWorld()]);
   const set = sets[puzzleIndex(ctx.day, sets.length)];
   const codes = set.codes;
+  const pieces = makePieces(codes, codes.map((c) => country(c)), set.region === 'world', world.countries, SIZE);
   const saved = loadGame<State>(MODE, ctx.day);
   const state: State = {
     pos: saved?.pos && typeof saved.pos === 'object' ? { ...saved.pos } : {},
@@ -162,8 +164,14 @@ async function mount(ctx: ModeContext) {
     chipEls.set(code, b);
     chips.append(b);
   }
+  // Shapes live in the svg (canvas units); their name tags are HTML on top so the text stays crisp.
+  const shapes = svgEl('g', { class: 'mm-pieces' });
+  const ghost = svgEl('g', { class: 'mm-ghost' });
   const svg = svgEl('svg', { viewBox: `0 0 ${SIZE} ${SIZE}`, class: 'mm-svg', 'aria-hidden': 'true' });
-  const markers = h('div', { class: 'mm-markers' });
+  svg.append(shapes, ghost);
+  const nameTag = (code: string) => h('span', { class: 'mm-label' }, h('span', { class: 'mm-flag', 'aria-hidden': 'true' }, flag(code)), h('span', { class: 'mm-name' }, shortName(code)));
+  const ghostTag = h('div', { class: 'mm-marker ghost', hidden: '' });
+  const markers = h('div', { class: 'mm-markers' }, ghostTag);
   const hint = h('div', { class: 'mm-hint' });
   const board = h('div', { class: 'mm-board', role: 'application', 'aria-label': t('canvasLabel') }, svg, hint, markers);
   const status = h('p', { class: 'mm-status' });
@@ -173,30 +181,67 @@ async function mount(ctx: ModeContext) {
   ctx.root.append(h('div', { class: 'mm-game split' }, h('div', { class: 'mm-col split-pre' }, head, chips), board, h('div', { class: 'mm-col split-post' }, status, submit, after)));
   keepOnScreen(board, () => submit);
 
-  const markerEls = new Map<string, HTMLElement>();
-  let suppressClickUntil = 0; // a drag that ends over the board must not also count as a tap
-
-  function position(el: HTMLElement, p: Pt) {
-    el.style.left = `${p[0] / 10}%`;
-    el.style.top = `${p[1] / 10}%`;
-    el.style.setProperty('--fx', String(p[0] / SIZE));
-    el.classList.toggle('below', p[1] < 90);
-  }
+  const shapeEls = new Map<string, SVGGElement>();
+  const tagEls = new Map<string, HTMLElement>();
+  let dragging = false; // a placed piece is being moved: the piece in hand stays out of the way
 
   function boardPoint(e: PointerEvent | MouseEvent): Pt {
     const r = board.getBoundingClientRect();
     return [clamp(((e.clientX - r.left) / r.width) * SIZE), clamp(((e.clientY - r.top) / r.height) * SIZE)];
   }
 
-  function makeMarker(code: string): HTMLElement {
-    const el = h(
-      'div',
-      { class: 'mm-marker', tabindex: '0', 'data-code': code, title: countryName(code), 'aria-label': countryName(code) },
-      h('span', { class: 'mm-dot' }),
-      h('span', { class: 'mm-label' }, h('span', { class: 'mm-flag', 'aria-hidden': 'true' }, flag(code)), h('span', { class: 'mm-name' }, shortName(code))),
-    );
+  /** The scored point of a piece held at `pt` (pieces are held by their middle, which stays on the canvas). */
+  function fromHold(code: string, pt: Pt): Pt {
+    const hold = pieces.get(code)!.hold;
+    return [Math.round(clamp(pt[0]) - hold[0]), Math.round(clamp(pt[1]) - hold[1])];
+  }
+
+  function shapeParts(code: string): SVGElement[] {
+    const pc = pieces.get(code)!;
+    const parts: SVGElement[] = [];
+    if (pc.tiny) parts.push(svgEl('circle', { cx: pc.hold[0], cy: pc.hold[1], r: RING, class: 'mm-ring' }));
+    parts.push(pc.d ? svgEl('path', { d: pc.d }) : svgEl('circle', { r: 5, class: 'mm-speck' }));
+    return parts;
+  }
+
+  /**
+   * The name tag sits inside a shape that has room for it, otherwise just above or below it:
+   * above unless that is off the canvas or on top of another tag.
+   */
+  function placeTag(el: HTMLElement, code: string, p: Pt) {
+    const { box } = pieces.get(code)!;
+    const frame = board.getBoundingClientRect();
+    const px = frame.width / SIZE; // screen px per canvas unit
+    const label = el.firstElementChild as HTMLElement;
+    const w = label.offsetWidth;
+    const ht = label.offsetHeight;
+    const roomy = (box[2] - box[0]) * px >= w * 0.9 && (box[3] - box[1]) * px >= ht * 1.7;
+    const x = clamp(p[0] + (box[0] + box[2]) / 2);
+    const left = x * px - (x / SIZE) * w;
+    const others = [...tagEls.values()].filter((o) => o !== el).map((o) => (o.firstElementChild as HTMLElement).getBoundingClientRect());
+    const clear = (top: number) => !others.some((o) => o.left - frame.left < left + w && o.right - frame.left > left && o.top - frame.top < top + ht && o.bottom - frame.top > top);
+    const above = clamp(p[1] + box[1] - 8);
+    const under = clamp(p[1] + box[3] + 8);
+    const below = !roomy && (p[1] + box[1] < 110 ? clear(under * px) || !clear(above * px - ht) : !clear(above * px - ht) && clear(under * px));
+    const y = roomy ? clamp(p[1] + (box[1] + box[3]) / 2) : below ? under : above;
+    el.style.left = `${x / 10}%`;
+    el.style.top = `${y / 10}%`;
+    el.style.setProperty('--fx', String(x / SIZE));
+    el.classList.toggle('mid', roomy);
+    el.classList.toggle('below', below);
+  }
+
+  function position(code: string) {
+    const p = state.pos[code];
+    shapeEls.get(code)!.setAttribute('transform', `translate(${p[0]} ${p[1]})`);
+    placeTag(tagEls.get(code)!, code, p);
+  }
+
+  /** Dragging the shape or its name tag moves the piece; a plain tap selects it. */
+  function grab(el: HTMLElement | SVGElement, code: string) {
     let drag: { id: number; off: Pt; sx: number; sy: number; moved: boolean } | null = null;
-    el.addEventListener('pointerdown', (e) => {
+    const on = (type: string, fn: (e: PointerEvent) => void) => el.addEventListener(type, fn as EventListener);
+    on('pointerdown', (e) => {
       if (state.done || e.button > 0) return;
       e.preventDefault();
       e.stopPropagation();
@@ -204,36 +249,49 @@ async function mount(ctx: ModeContext) {
       const p = boardPoint(e);
       const cur = state.pos[code];
       drag = { id: e.pointerId, off: [cur[0] - p[0], cur[1] - p[1]], sx: e.clientX, sy: e.clientY, moved: false };
-      el.classList.add('dragging');
     });
-    el.addEventListener('pointermove', (e) => {
+    on('pointermove', (e) => {
       if (!drag || e.pointerId !== drag.id) return;
       if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) < 4) return;
-      drag.moved = true;
+      if (!drag.moved) {
+        drag.moved = dragging = true;
+        hideGhost();
+        shapeEls.get(code)!.classList.add('dragging');
+        tagEls.get(code)!.classList.add('dragging');
+      }
       const p = boardPoint(e);
-      state.pos[code] = [Math.round(clamp(p[0] + drag.off[0])), Math.round(clamp(p[1] + drag.off[1]))];
-      position(el, state.pos[code]);
+      const hold = pieces.get(code)!.hold;
+      state.pos[code] = fromHold(code, [p[0] + drag.off[0] + hold[0], p[1] + drag.off[1] + hold[1]]);
+      position(code);
     });
     const end = (e: PointerEvent) => {
       if (!drag || e.pointerId !== drag.id) return;
       const moved = drag.moved;
       drag = null;
-      el.classList.remove('dragging');
+      dragging = false;
+      shapeEls.get(code)!.classList.remove('dragging');
+      tagEls.get(code)!.classList.remove('dragging');
       if (moved) {
-        suppressClickUntil = performance.now() + 350;
+        rest(e);
         save();
         update();
-      } else if (selected && selected !== code && !state.pos[selected]) {
-        // a country is waiting to be placed: a tap on a crowded spot places it rather than picking this marker
+      } else if (e.type === 'pointerup' && selected && selected !== code && !state.pos[selected]) {
+        // a country is waiting to be placed: a tap on a shape that is in the way drops it there
         placeSelected(boardPoint(e));
-      } else {
+        rest(e);
+      } else if (e.type === 'pointerup') {
         select(code);
       }
     };
-    el.addEventListener('pointerup', end);
-    el.addEventListener('pointercancel', end);
-    el.addEventListener('click', (e) => e.stopPropagation());
-    el.addEventListener('keydown', (e) => {
+    on('pointerup', end);
+    on('pointercancel', end);
+  }
+
+  function makePiece(code: string) {
+    const shape = svgEl('g', { class: 'mm-piece', 'data-code': code });
+    shape.append(...shapeParts(code));
+    const tag = h('div', { class: 'mm-marker', tabindex: '0', 'data-code': code, title: countryName(code), 'aria-label': countryName(code) }, nameTag(code));
+    tag.addEventListener('keydown', (e) => {
       if (state.done) return;
       const step = e.shiftKey ? 40 : 10;
       const d: Record<string, Pt> = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
@@ -241,40 +299,99 @@ async function mount(ctx: ModeContext) {
       if (!v) return;
       e.preventDefault();
       const cur = state.pos[code];
-      state.pos[code] = [clamp(cur[0] + v[0]), clamp(cur[1] + v[1])];
-      position(el, state.pos[code]);
+      const hold = pieces.get(code)!.hold;
+      state.pos[code] = fromHold(code, [cur[0] + v[0] + hold[0], cur[1] + v[1] + hold[1]]);
+      position(code);
       save();
     });
-    markers.append(el);
-    markerEls.set(code, el);
-    return el;
+    grab(shape, code);
+    grab(tag, code);
+    shapeEls.set(code, shape);
+    tagEls.set(code, tag);
+    markers.append(tag);
+    // small pieces on top, so a big one never buries them
+    const order = [...shapeEls.keys()].sort((a, b) => pieces.get(b)!.size - pieces.get(a)!.size);
+    shapes.replaceChildren(...order.map((c) => shapeEls.get(c)!));
   }
+
+  // ----- the piece in hand: the selected country's shape follows the pointer -----
+  let ghostCode: string | null = null;
+  let restAt: { x: number; y: number } | null = null; // after a drop the next piece waits until the pointer moves on
+
+  function showGhost(pt: Pt) {
+    if (!selected || state.done) return hideGhost();
+    if (ghostCode !== selected) {
+      ghostCode = selected;
+      ghost.replaceChildren(...shapeParts(selected));
+      ghostTag.replaceChildren(nameTag(selected));
+    }
+    const p = fromHold(selected, pt);
+    ghost.setAttribute('transform', `translate(${p[0]} ${p[1]})`);
+    ghost.style.display = '';
+    ghostTag.hidden = false;
+    placeTag(ghostTag, selected, p);
+  }
+  function hideGhost() {
+    ghost.style.display = 'none';
+    ghostTag.hidden = true;
+  }
+  function rest(e: PointerEvent) {
+    restAt = { x: e.clientX, y: e.clientY };
+    hideGhost();
+  }
+  hideGhost();
+
+  let placing: number | null = null;
+  board.addEventListener('pointerdown', (e) => {
+    if (state.done || !selected || e.button > 0) return;
+    e.preventDefault();
+    placing = e.pointerId;
+    board.setPointerCapture(e.pointerId);
+    restAt = null;
+    showGhost(boardPoint(e));
+  });
+  board.addEventListener('pointermove', (e) => {
+    if (dragging || (placing === null ? e.pointerType === 'touch' : e.pointerId !== placing)) return;
+    if (restAt && Math.hypot(e.clientX - restAt.x, e.clientY - restAt.y) < 14) return;
+    restAt = null;
+    showGhost(boardPoint(e));
+  });
+  board.addEventListener('pointerup', (e) => {
+    if (e.pointerId !== placing) return;
+    placing = null;
+    placeSelected(boardPoint(e));
+    rest(e);
+  });
+  board.addEventListener('pointercancel', (e) => {
+    if (e.pointerId !== placing) return;
+    placing = null;
+    hideGhost();
+  });
+  board.addEventListener('pointerleave', () => {
+    if (placing === null) hideGhost();
+  });
 
   function select(code: string) {
     if (state.done) return;
     selected = selected === code && state.pos[code] ? null : code;
+    hideGhost();
     update();
   }
 
   function placeSelected(pt: Pt) {
     if (!selected) return;
     const code = selected;
-    state.pos[code] = pt.map(Math.round) as Pt;
-    const el = markerEls.get(code) ?? makeMarker(code);
-    position(el, state.pos[code]);
+    state.pos[code] = fromHold(code, pt);
+    if (!shapeEls.has(code)) makePiece(code);
+    position(code);
+    const el = shapeEls.get(code)!;
     el.classList.remove('pop');
-    void el.offsetWidth; // restart the drop animation
+    void el.getBoundingClientRect(); // restart the drop animation
     el.classList.add('pop');
     selected = codes.find((c) => !state.pos[c]) ?? null;
     save();
     update();
   }
-
-  board.addEventListener('click', (e) => {
-    if (state.done || !selected || performance.now() < suppressClickUntil) return;
-    if ((e.target as Element).closest('.mm-marker')) return;
-    placeSelected(boardPoint(e));
-  });
 
   function update() {
     const n = codes.filter((c) => state.pos[c]).length;
@@ -286,7 +403,8 @@ async function mount(ctx: ModeContext) {
       b.setAttribute('aria-pressed', String(code === selected));
       b.disabled = state.done;
     }
-    for (const [code, el] of markerEls) el.classList.toggle('sel', code === selected);
+    for (const [code, el] of shapeEls) el.classList.toggle('sel', code === selected);
+    for (const [code, el] of tagEls) el.classList.toggle('sel', code === selected);
     board.classList.toggle('armed', !!selected && !state.done);
     hint.textContent = n === 0 ? t('hintEmpty') : '';
     hint.hidden = n > 0;
@@ -296,8 +414,17 @@ async function mount(ctx: ModeContext) {
     submit.textContent = n < 7 ? t('submitN') : t('submit');
   }
 
-  for (const code of codes) if (state.pos[code]) position(makeMarker(code), state.pos[code]);
+  for (const code of codes) {
+    if (!state.pos[code]) continue;
+    makePiece(code);
+    position(code);
+  }
   update();
+  // Whether a tag fits inside its shape depends on the canvas size on screen.
+  const tagFit = new ResizeObserver(() => {
+    for (const [code, el] of tagEls) placeTag(el, code, state.pos[code]);
+  });
+  tagFit.observe(board);
 
   // ---------- scoring & reveal ----------
   function evaluateNow() {
@@ -324,19 +451,21 @@ async function mount(ctx: ModeContext) {
     const inv = invertSim(ev.sim); // true km → canvas
     board.classList.add('revealed');
     if (animate) board.classList.add('animate');
-    for (const m of markerEls.values()) m.removeAttribute('tabindex');
+    for (const m of tagEls.values()) m.removeAttribute('tabindex');
+    hideGhost();
 
     // Real-world layers in the player's frame.
     const worldSvg = svgEl('svg', { x: 0, y: 0, width: SIZE, height: SIZE, class: 'mm-world' });
     const lines = svgEl('g', { class: 'mm-lines' });
-    svg.replaceChildren(worldSvg, lines);
+    svg.replaceChildren(worldSvg, shapes, lines);
     codes.forEach((code, i) => {
       const tp = applySim(inv, truth[i]);
       const pp = state.pos[code];
       const cls = BAND_CLASS[band(ev.errs[i], ev.spread)];
       lines.append(svgEl('line', { x1: tp[0], y1: tp[1], x2: pp[0], y2: pp[1], class: `mm-err ${cls}`, pathLength: 1 }));
       lines.append(svgEl('circle', { cx: tp[0], cy: tp[1], r: 9, class: 'mm-true' }));
-      markerEls.get(code)?.classList.add(cls);
+      shapeEls.get(code)?.classList.add(cls);
+      tagEls.get(code)?.classList.add(cls);
     });
     renderResult(ev);
     try {
@@ -404,7 +533,9 @@ async function mount(ctx: ModeContext) {
   if (state.done) void reveal(false);
 
   cleanup = () => {
-    markerEls.clear();
+    tagFit.disconnect();
+    shapeEls.clear();
+    tagEls.clear();
   };
 }
 

@@ -52,23 +52,22 @@ const t = makeT({
     ruledOut: 'Already ruled out',
     left: '{n} guesses left',
     left1: 'Last guess',
-    next1: 'A miss reveals coastlines and lakes',
-    next2: 'A miss reveals rivers',
-    next3: 'A miss widens the view and names one country',
-    next3b: 'A miss widens the view',
+    next1: 'A miss reveals lakes and rivers',
+    next2: 'A miss widens the view',
+    next3: 'A miss names one country',
     given: '{name} is one of them',
     found: 'Found',
     clear: 'Remove {name}',
-    mapLabel: 'Border lines within {km} km of a tripoint',
+    mapLabel: 'Countries within {km} km of a tripoint, each in its own colour',
     north: 'N',
     knownAs: 'Known as {name}',
     countries: 'The three countries',
     attr: 'Borders, coastlines, lakes, rivers: Natural Earth (public domain). Names: Wikidata (CC0).',
     solvedIn: 'Solved in {n}/4',
-    how1: 'The map shows only border lines around a point where three countries meet. North is up and the circle has a radius of about 150 km.',
+    how1: 'The map shows the countries around a point where three of them meet: each has its own colour, none has a name. North is up and the circle has a radius of about 150 km.',
     how2: 'Fill the three slots with countries (order does not matter) and press Check. You have 4 guesses.',
     how3: '🟩 is one of the three · 🟨 borders at least one of them · ⬛ neither. Correct countries stay locked in place.',
-    how4: 'Each miss adds a hint: 1) coastlines and lakes, 2) rivers, 3) a wider 500 km view and one missing country named.',
+    how4: 'Each miss adds a hint: 1) lakes and rivers, 2) a wider 500 km view, 3) one missing country named.',
     howEx: 'Example: the answer is Switzerland, Germany and France (Basel). Guessing Germany, Austria, Portugal gives 🟩 Germany, 🟨 Austria (it borders Germany and Switzerland), ⬛ Portugal.',
   },
   tr: {
@@ -81,23 +80,22 @@ const t = makeT({
     ruledOut: 'Bu ülke zaten elendi',
     left: '{n} hak kaldı',
     left1: 'Son hak',
-    next1: 'Yanlış tahmin kıyıları ve gölleri gösterir',
-    next2: 'Yanlış tahmin nehirleri gösterir',
-    next3: 'Yanlış tahmin görüşü genişletir ve bir ülkeyi açar',
-    next3b: 'Yanlış tahmin görüşü genişletir',
+    next1: 'Yanlış tahmin gölleri ve nehirleri gösterir',
+    next2: 'Yanlış tahmin görüşü genişletir',
+    next3: 'Yanlış tahmin bir ülkeyi açar',
     given: '{name} bunlardan biri',
     found: 'Bulundu',
     clear: '{name} ülkesini kaldır',
-    mapLabel: 'Bir üçlü noktanın {km} km çevresindeki sınır çizgileri',
+    mapLabel: 'Bir üçlü noktanın {km} km çevresindeki ülkeler, her biri ayrı renkte',
     north: 'K',
     knownAs: 'Bilinen adı: {name}',
     countries: 'Üç ülke',
     attr: 'Sınırlar, kıyılar, göller, nehirler: Natural Earth (kamu malı). Adlar: Wikidata (CC0).',
     solvedIn: '{n}/4 tahminde bildin',
-    how1: 'Haritada yalnızca üç ülkenin buluştuğu bir noktanın çevresindeki sınır çizgileri var. Kuzey yukarıda; çemberin yarıçapı yaklaşık 150 km.',
+    how1: 'Haritada üç ülkenin buluştuğu bir noktanın çevresindeki ülkeler var: her biri ayrı renkte, hiçbirinin adı yok. Kuzey yukarıda; çemberin yarıçapı yaklaşık 150 km.',
     how2: 'Üç kutuyu ülkelerle doldur (sıra önemli değil) ve Kontrol et\'e bas. 4 hakkın var.',
     how3: '🟩 üç ülkeden biri · 🟨 en az birine komşu · ⬛ hiçbiri. Doğru ülkeler yerinde kilitli kalır.',
-    how4: 'Her yanlış tahmin bir ipucu ekler: 1) kıyılar ve göller, 2) nehirler, 3) 500 km\'lik geniş görüş ve eksik ülkelerden birinin adı.',
+    how4: 'Her yanlış tahmin bir ipucu ekler: 1) göller ve nehirler, 2) 500 km\'lik geniş görüş, 3) eksik ülkelerden birinin adı.',
     howEx: 'Örnek: cevap İsviçre, Almanya ve Fransa (Basel). Almanya, Avusturya, Portekiz tahmini 🟩 Almanya, 🟨 Avusturya (Almanya ve İsviçre\'ye komşu), ⬛ Portekiz verir.',
   },
 });
@@ -112,6 +110,24 @@ function fmtCoord(lat: number, lon: number): string {
   return `${Math.abs(lat).toFixed(3)}° ${ns}, ${Math.abs(lon).toFixed(3)}° ${ew}`;
 }
 
+/**
+ * A fill colour (0-6) for every country in view: the three answers take 0-2 in puzzle order, the rest
+ * the least used colour that none of their neighbours has.
+ */
+function fillColours(P: Puzzle): Map<string, number> {
+  const out = new Map(P.codes.map((c, i) => [c, i]));
+  const used = [1, 1, 1, 0, 0, 0, 0];
+  for (const c of Object.keys(P.f)) {
+    if (out.has(c)) continue;
+    const taken = new Set(nbOf(c).map((n) => out.get(n)));
+    let best = 3;
+    for (const i of [6, 5, 4, 3, 2, 1, 0]) if (!taken.has(i) && (taken.has(best) || used[i] <= used[best])) best = i;
+    out.set(c, best);
+    used[best]++;
+  }
+  return out;
+}
+
 /** The border map: data in projected km (scaled into a fixed view), decorations in view units. */
 function borderMap(P: Puzzle) {
   const svg = svgEl('svg', { class: 'tp-svg', viewBox: `${-VU * 1.07} ${-VU * 1.07} ${VU * 2.14} ${VU * 2.14}`, role: 'img' });
@@ -122,12 +138,13 @@ function borderMap(P: Puzzle) {
   defs.append(clip);
   const outer = svgEl('g', { 'clip-path': `url(#${clipId})` });
   const data = svgEl('g');
-  const fills = P.codes.map((c, i) => svgEl('path', { d: pathOf(P.f[c] ?? [], true), class: `tp-fill tp-f${i}` }));
+  const colour = fillColours(P);
+  const fills = Object.keys(P.f).map((c) => svgEl('path', { d: pathOf(P.f[c], true), class: `tp-fill tp-f${colour.get(c)}${P.codes.includes(c) ? '' : ' other'}` }));
   const lakes = svgEl('path', { d: pathOf(P.l, true), class: 'tp-lake' });
   const rivers = svgEl('path', { d: pathOf(P.r), class: 'tp-river' });
   const coast = svgEl('path', { d: pathOf(P.c), class: 'tp-coast' });
   const borders = svgEl('path', { d: pathOf(P.b), class: 'tp-border' });
-  data.append(...fills, lakes, rivers, coast, borders);
+  data.append(...fills, coast, lakes, rivers, borders);
   outer.append(data);
 
   const centre = svgEl('g', { class: 'tp-centre' });
@@ -173,9 +190,8 @@ function borderMap(P: Puzzle) {
   }
   applyRadius(NEAR_KM);
 
-  function set(state: { coast: boolean; rivers: boolean; wide: boolean; reveal: boolean }, animate: boolean) {
-    svg.classList.toggle('show-coast', state.coast || state.reveal);
-    svg.classList.toggle('show-rivers', state.rivers || state.reveal);
+  function set(state: { water: boolean; wide: boolean; reveal: boolean }, animate: boolean) {
+    svg.classList.toggle('show-water', state.water || state.reveal);
     svg.classList.toggle('reveal', state.reveal);
     const target = state.wide || state.reveal ? WIDE_KM : NEAR_KM;
     cancelAnimationFrame(anim);
@@ -343,7 +359,7 @@ const mode: ModeModule = {
       // Status
       if (!finished) {
         const left = MAX_GUESSES - guesses.length;
-        const next = [t('next1'), t('next2'), found(guesses, answer).length >= 2 ? t('next3b') : t('next3')][miss] ?? '';
+        const next = [t('next1'), t('next2'), found(guesses, answer).length >= 2 ? '' : t('next3')][miss] ?? '';
         const g = given();
         status.replaceChildren(
           h('strong', {}, left === 1 ? t('left1') : t('left', { n: left })),

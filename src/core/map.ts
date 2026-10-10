@@ -28,7 +28,7 @@ export async function loadWorld() {
  * the whole globe in that country's fill. Draw only the rings that still enclose an area.
  */
 const drawable = new WeakMap<CountryFeature, GeoPermissibleObjects | null>();
-function drawableShape(f: CountryFeature): GeoPermissibleObjects | null {
+export function drawableShape(f: CountryFeature): GeoPermissibleObjects | null {
   if (drawable.has(f)) return drawable.get(f)!;
   const g = f.geometry;
   const solid = (ring: Position[]) => new Set(ring.map((c) => `${c[0]},${c[1]}`)).size >= 3;

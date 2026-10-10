@@ -96,18 +96,14 @@
 .mc-icon svg { width: 100%; height: 100%; }
 .mc-title { margin: 0; font-size: 1.22rem; }
 .mc-blurb { margin: 3px 0 0; color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
-.mc-meta { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.76rem; color: var(--muted); }
-.mc-score { margin-left: auto; font: 700 0.8rem/1 var(--font-label); letter-spacing: 0.04em; }
+.mc-meta { margin-top: 10px; color: var(--muted); }
+.mc-score { font: 700 0.8rem/1 var(--font-label); letter-spacing: 0.04em; }
 .mc-score.won { color: var(--good); }
-.mc-time { margin-left: auto; font-family: var(--font-label); }
 .mc-go {
   width: 38px; height: 38px; display: grid; place-items: center; align-self: center; border-radius: 50%;
   border: 1px solid var(--line-strong); color: var(--heading); font-weight: 700; transition: all 0.15s ease;
 }
 .mc:hover .mc-go { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
-.pips { display: inline-flex; gap: 4px; }
-.pips i { width: 7px; height: 7px; border-radius: 50%; background: color-mix(in srgb, var(--line-strong) 80%, transparent); }
-.pips i.on { background: var(--accent); }
 
 /* ---------------- competition ---------------- */
 .compete { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 28px 0 8px; }

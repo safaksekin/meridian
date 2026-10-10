@@ -18,7 +18,6 @@ const UNIT = 0.1; // km per stored integer unit
 const NEAR_KM = 170; // inside this radius keep fine detail (the opening 150 km view)
 const TOL_NEAR = 0.25; // km, simplification tolerance near the centre
 const TOL_FAR = 1.0; // km, further out (only seen in the 500 km view)
-const TOL_FILL = 1.0; // km, country fills for the reveal
 const DEDUP_KM = 2;
 const SEED = 20261010;
 const FIRST_EASY = 30;
@@ -291,7 +290,6 @@ function simplify(pts, tolAt) {
   return pts.filter((_, i) => keep[i]);
 }
 const tolLine = (p) => (Math.hypot(p[0], p[1]) < NEAR_KM ? TOL_NEAR : TOL_FAR);
-const tolFill = () => TOL_FILL;
 
 /** Integer-quantise and delta-encode: [x0, y0, dx1, dy1, ...] in UNIT km. */
 function encode(lines, tolAt, { ring = false, minExtent = 0 } = {}) {
@@ -338,10 +336,13 @@ order.forEach((c, n) => {
   const co = project(proj, { type: 'MultiLineString', coordinates: coastLines });
   const lk = lakes.flatMap((f, i) => (hits(lakeBoxes[i], w) ? project(proj, f.geometry) : []));
   const rv = rivers.flatMap((f, i) => (hits(riverBoxes[i], w) ? project(proj, f.geometry) : []));
+  // Every country in view gets a fill (the three answers first). Same tolerance as the lines drawn over them.
   const fills = {};
-  for (const code of c.codes) {
+  for (const code of [...c.codes, ...feats.map((f) => f.code).filter((k) => !c.codes.includes(k)).sort()]) {
     const polys = featBy.get(code).geometry.coordinates.filter((_, i) => hits(polyBoxes.get(code)[i], w));
-    fills[code] = encode(project(proj, { type: 'MultiPolygon', coordinates: polys }), tolFill, { ring: true, minExtent: 1.5 });
+    if (!polys.length) continue;
+    const rings = encode(project(proj, { type: 'MultiPolygon', coordinates: polys }), tolLine, { ring: true, minExtent: 1.5 });
+    if (rings.length || c.codes.includes(code)) fills[code] = rings;
   }
   const puzzle = {
     n,

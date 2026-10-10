@@ -25,10 +25,10 @@ test('win, misses and hint layers', () => {
   assert.ok(!isWin(['FR', 'CH', 'IT'], ANS));
   const g = [['DE', 'AT', 'PT'], ['DE', 'IT', 'ES']];
   assert.equal(misses(g, ANS), 2);
-  assert.deepEqual(hints(0), { coast: false, rivers: false, wide: false, give: false });
-  assert.deepEqual(hints(1), { coast: true, rivers: false, wide: false, give: false });
-  assert.deepEqual(hints(2), { coast: true, rivers: true, wide: false, give: false });
-  assert.deepEqual(hints(3), { coast: true, rivers: true, wide: true, give: true });
+  assert.deepEqual(hints(0), { water: false, wide: false, give: false });
+  assert.deepEqual(hints(1), { water: true, wide: false, give: false });
+  assert.deepEqual(hints(2), { water: true, wide: true, give: false });
+  assert.deepEqual(hints(3), { water: true, wide: true, give: true });
 });
 
 test('given country only after 3 misses and only while two are missing', () => {
