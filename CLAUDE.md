@@ -27,7 +27,7 @@ Vite 7 + TypeScript strict, vanilla DOM, d3-geo, topojson. Hash routing (`#/beel
 - `src/main.ts` router · `src/home/` home, header (`chrome.ts`), card art (`cardart.ts`)
 - `src/modes/<id>/` one folder per game (contract in `src/modes/types.ts`, guide in `docs/MODE_GUIDE.md`)
 - `src/core/` daily seed, storage/stats, i18n (TR/EN via `makeT`), UI kit, progression (`progress.ts`: XP/levels/streak from local stats), friend challenges (`challenge.ts`: `?ch=` share links)
-- `scripts/build-<id>.mjs` pre-generate puzzles into `public/data/<id>/`; `scripts/build-images.mjs` (NASA PD / CC0 artwork via macOS `sips`); `scripts/build-art.mjs` (mental card SVG)
+- `scripts/build-<id>.mjs` pre-generate puzzles into `public/data/<id>/`; `scripts/build-images.mjs` (NASA PD / CC0 artwork via macOS `sips`); `scripts/build-art.mjs` (mental card SVG; tripoint card SVG = NASA base from build-images + real Natural Earth borders, frame in `scripts/lib/tripoint-card.mjs`)
 - `data-raw/` raw downloads (git-ignored): `npm run data:fetch`
 
 ## Commands

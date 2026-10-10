@@ -22,12 +22,12 @@
  {
   "id": "card-hinterland",
   "licence": "CC0 (Unsplash, via Wikimedia Commons)",
-  "page": "https://commons.wikimedia.org/wiki/File:Buildings_on_a_green_slope_(Unsplash).jpg"
+  "page": "https://commons.wikimedia.org/wiki/File:European_village_(Unsplash).jpg"
  },
  {
   "id": "card-tripoint",
-  "licence": "Public domain (NASA Earth Observatory, via Wikimedia Commons)",
-  "page": "https://commons.wikimedia.org/wiki/File:The_Mountainous_Spine_of_Corsica.jpeg"
+  "licence": "Public domain (NASA Blue Marble, via NASA GIBS)",
+  "page": "https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api"
  },
  {
   "id": "photo-barcelona",

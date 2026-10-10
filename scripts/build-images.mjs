@@ -1,8 +1,9 @@
 // Downloads the public-domain / CC0 artwork for the home page and crops it to web sizes.
 // Sources are listed in IMAGES with their licence. Uses macOS `sips` for cropping/resizing.
-// Run: node scripts/build-images.mjs   (writes public/img/*.jpg)
+// Run: node scripts/build-images.mjs   (writes public/img/*.jpg), then node scripts/build-art.mjs
 import { existsSync, mkdirSync, writeFileSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { TRIPOINT_BBOX } from './lib/tripoint-card.mjs';
 
 const RAW = new URL('../data-raw/img/', import.meta.url).pathname;
 const OUT = new URL('../public/img/', import.meta.url).pathname;
@@ -39,15 +40,17 @@ export const IMAGES = [
   },
   {
     id: 'card-hinterland', licence: 'CC0 (Unsplash, via Wikimedia Commons)',
-    page: 'https://commons.wikimedia.org/wiki/File:Buildings_on_a_green_slope_(Unsplash).jpg',
-    commons: 'File:Buildings on a green slope (Unsplash).jpg',
-    crop: [0.12, 0.2, 0.98, 0.74], out: [800, 500], q: 62,
+    page: 'https://commons.wikimedia.org/wiki/File:European_village_(Unsplash).jpg',
+    commons: 'File:European village (Unsplash).jpg',
+    crop: [0, 0.12, 1, 1], out: [800, 500], q: 66,
   },
   {
-    id: 'card-tripoint', licence: 'Public domain (NASA Earth Observatory, via Wikimedia Commons)',
-    page: 'https://commons.wikimedia.org/wiki/File:The_Mountainous_Spine_of_Corsica.jpeg',
-    commons: 'File:The Mountainous Spine of Corsica.jpeg',
-    crop: [0.18, 0.2, 0.86, 0.46], out: [800, 500], q: 62,
+    // Base layer of card-tripoint.svg (scripts/build-art.mjs draws the borders on top): the Basel
+    // tripoint region. `base` keeps it in data-raw/ instead of public/.
+    id: 'card-tripoint', licence: 'Public domain (NASA Blue Marble, via NASA GIBS)',
+    page: 'https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api',
+    src: `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=BlueMarble_ShadedRelief_Bathymetry&STYLES=&CRS=EPSG:4326&BBOX=${TRIPOINT_BBOX[1]},${TRIPOINT_BBOX[0]},${TRIPOINT_BBOX[3]},${TRIPOINT_BBOX[2]}&WIDTH=1600&HEIGHT=1000&FORMAT=image/jpeg`,
+    crop: [0, 0, 1, 1], out: [800, 500], q: 40, base: true,
   },
   {
     id: 'photo-barcelona', licence: 'Public domain (NASA, ISS crew photograph, via Wikimedia Commons)',
@@ -94,7 +97,7 @@ for (const im of IMAGES) {
   const ox = Math.round(x0 * W + (cw - w) / 2), oy = Math.round(y0 * H + (ch - h) / 2);
   const tmp = `${RAW}${im.id}.crop.jpg`;
   execFileSync('sips', ['-s', 'format', 'jpeg', '--cropOffset', String(oy), String(ox), '-c', String(h), String(w), raw, '--out', tmp], { stdio: 'ignore' });
-  const out = `${OUT}${im.id}.jpg`;
+  const out = im.base ? `${RAW}${im.id}.base.jpg` : `${OUT}${im.id}.jpg`;
   execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', String(im.q ?? 72), '-z', String(im.out[1]), String(im.out[0]), tmp, '--out', out], { stdio: 'ignore' });
   console.log(`${im.id}: ${w}x${h} from ${W}x${H} -> ${im.out.join('x')} ${Math.round(statSync(out).size / 1024)} KB`);
 }

@@ -185,11 +185,10 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 }
 .lang-menu:hover { border-color: var(--muted); }
 .lang-menu:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
-.lang-globe { position: absolute; left: 9px; font-size: 0.9rem; pointer-events: none; }
 .lang-caret { position: absolute; right: 9px; font-size: 0.7rem; color: var(--muted); pointer-events: none; }
 .lang-select {
   appearance: none; -webkit-appearance: none; border: 0; background: transparent; color: var(--text);
-  font: 600 0.86rem/1 var(--font-sans); height: 100%; padding: 0 26px 0 30px; cursor: pointer; outline: none;
+  font: 600 0.86rem/1 var(--font-sans); height: 100%; padding: 0 26px 0 14px; cursor: pointer; outline: none;
 }
 .lang-select option { color: #1c1b18; background: #fff; }
 
@@ -322,7 +321,6 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
   .top { padding: 8px 10px; gap: 6px; }
   .top-left, .top-right { gap: 5px; }
   .top-left .icon-btn ~ .brand .brand-mark { display: none; }
-  .lang-globe { display: none; }
   .lang-select { padding: 0 20px 0 9px; }
   .lang-caret { right: 7px; }
   .top-chip { padding: 0 7px; }
@@ -337,13 +335,16 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 /* Header nav + avatar */
 .top { gap: 12px; }
 .top-left { gap: 10px; }
-.top-nav { display: flex; align-items: stretch; gap: 4px; margin-left: 28px; align-self: stretch; }
+.top-nav { position: relative; display: flex; align-items: stretch; gap: 4px; margin-left: 28px; align-self: stretch; }
 .nav-link {
   border: 0; background: none; padding: 0 12px; font-weight: 600; font-size: 0.9rem; color: var(--muted); cursor: pointer;
-  border-bottom: 2px solid transparent; margin-bottom: -11px; padding-bottom: 9px;
+  border-bottom: 2px solid transparent; margin-bottom: -11px; padding-bottom: 9px; transition: color 0.2s ease;
 }
-.nav-link:hover { color: var(--heading); }
-.nav-link.active { color: var(--heading); border-bottom-color: var(--accent); }
+.nav-link:hover, .nav-link.active { color: var(--heading); }
+/* One underline for the whole nav: it slides to the active link (placed by topNav in chrome.ts). */
+.nav-ink { position: absolute; left: 0; bottom: -11px; width: 0; height: 2px; background: var(--accent); pointer-events: none; }
+.top-nav.ready .nav-ink { transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+@media (prefers-reduced-motion: reduce) { .top-nav.ready .nav-ink { transition: none; } }
 .top-chip.streak { border-radius: 999px; gap: 4px; font-family: var(--font-sans); letter-spacing: 0; font-size: 0.8rem; }
 .top-chip .chev { opacity: 0.6; font-size: 1rem; line-height: 1; }
 .avatar {

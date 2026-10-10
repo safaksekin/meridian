@@ -22,20 +22,25 @@
 /* ---------------- hero ---------------- */
 .hero2 { position: relative; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: center; gap: 12px; min-height: 420px; padding: 18px 0 8px; }
 .hero-copy { position: relative; z-index: 2; padding: 24px 0; }
-.hero-copy h1 { font-size: clamp(2.2rem, 4.4vw, 3.4rem); line-height: 1.03; margin: 14px 0 16px; }
+.hero-copy h1 { font-size: clamp(2.2rem, 4.4vw, 3.4rem); line-height: 1.03; margin: 0 0 16px; }
 .hero-sub { color: var(--muted); font-size: 1.15rem; margin: 0 0 26px; max-width: 30em; }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; }
 .hero-meta2 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 22px 0 0; font: 0.84rem/1.4 var(--font-label); color: var(--muted); letter-spacing: 0.04em; }
 .hero-meta2 .mono { color: var(--heading); font-weight: 700; }
 .hero-meta2 .sep { width: 1px; height: 14px; background: var(--line-strong); }
 
-.hero-art { position: relative; align-self: stretch; min-height: 440px; margin: -18px -28px 0 0; }
+/* The map is larger than its grid cell: it bleeds past the page gutter and a little behind the copy. */
+.hero-art { position: relative; align-self: stretch; min-height: 540px; margin: -34px -28px -12px -64px; }
 .hero-map {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 40% 45%;
-  -webkit-mask-image: radial-gradient(closest-side at 54% 50%, #000 58%, rgba(0, 0, 0, 0.55) 80%, transparent 100%);
-  mask-image: radial-gradient(closest-side at 54% 50%, #000 58%, rgba(0, 0, 0, 0.55) 80%, transparent 100%);
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 40% 50%;
+  -webkit-mask-image: radial-gradient(closest-side at 54% 50%, #000 68%, rgba(0, 0, 0, 0.55) 86%, transparent 100%);
+  mask-image: radial-gradient(closest-side at 54% 50%, #000 68%, rgba(0, 0, 0, 0.55) 86%, transparent 100%);
   filter: saturate(1.08) contrast(1.04);
 }
+/* Same frame as the cover-fitted image (the box is never wider than the image's 1600 × 902), so
+   positions inside it are percentages of the map itself. */
+.hero-clip { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.hero-stage { position: absolute; top: 0; bottom: 0; left: 40%; aspect-ratio: 1600 / 902; transform: translateX(-40%); pointer-events: none; }
 .hero-route { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .hero-route path { fill: none; stroke: #fff; stroke-width: 2.5; stroke-dasharray: 2 7; stroke-linecap: round; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35)); }
 /* Map pins are drawn with a mask so they can take the brand colour (a data-URI image cannot). */
@@ -57,6 +62,7 @@
 .hp-pin { width: 10px; height: 13px; flex: none; background: var(--brand-light); -webkit-mask: var(--pin) center / contain no-repeat; mask: var(--pin) center / contain no-repeat; }
 
 /* ---------------- today ---------------- */
+.today-sec, .compete { scroll-margin-top: 58px; }
 .today-sec { padding: 26px 0 8px; border-top: 1px solid var(--line); }
 .today-head { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 28px; margin: 6px 0 22px; }
 .today-progress { display: flex; align-items: center; gap: 12px; font-size: 0.86rem; color: var(--muted); }
@@ -74,11 +80,9 @@
 .mc:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .mc-media { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #0e1d35; }
 .mc-media img, .mc-media .mc-overlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-.mc-media img { transition: transform 0.6s ease; }
-.mc:hover .mc-media img { transform: scale(1.05); }
-.mc-tripoint img { filter: brightness(0.92) contrast(1.08); }
-.mc-tripoint::after { content: ''; position: absolute; inset: 0; background: linear-gradient(160deg, #0f8f95, #0b4f6e); mix-blend-mode: color; opacity: 0.85; }
-.mc-tripoint .mc-overlay, .mc-tripoint .mc-tag { z-index: 1; }
+/* The photo and the shapes drawn on it zoom together. */
+.mc-media img, .mc-media .mc-overlay { transition: transform 0.6s ease; }
+.mc:hover .mc-media img, .mc:hover .mc-media .mc-overlay { transform: scale(1.05); }
 .mc-tag, .mc-badge {
   position: absolute; top: 12px; z-index: 2; font: 700 0.66rem/1 var(--font-label); letter-spacing: 0.1em; text-transform: uppercase;
   padding: 6px 10px; border-radius: 999px; backdrop-filter: blur(6px);
@@ -154,8 +158,8 @@
 @media (max-width: 920px) {
   .hero2 { grid-template-columns: 1fr; min-height: 0; padding-top: 8px; }
   .hero-copy { padding: 18px 0 0; }
-  .hero-art { min-height: 300px; margin: 0 -28px; }
-  .hero-photo { width: 190px; top: 4%; right: 6%; }
+  .hero-art { min-height: 0; aspect-ratio: 1600 / 902; margin: 0 -28px; }
+  .hero-photo { width: 30%; top: 4%; right: 6%; }
   .mc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 760px) {
@@ -164,9 +168,9 @@
 /* Phones: 3 × 2 compact cards (image + title), like before */
 @media (max-width: 600px) {
   .home { padding: 0 16px 20px; }
-  .hero-copy h1 { margin: 10px 0 12px; }
+  .hero-copy h1 { margin: 0 0 12px; }
   .hero-sub { font-size: 1rem; margin-bottom: 20px; }
-  .hero-art { min-height: 230px; margin: 4px -16px 0; }
+  .hero-art { aspect-ratio: 4 / 3; margin: 4px -16px 0; }
   .hero-photo { width: 132px; padding: 5px 5px 0; }
   .hero-photo figcaption { font-size: 0.5rem; padding: 5px 2px 6px; }
   .hero-rose { width: 58px; height: 58px; }
@@ -191,7 +195,7 @@
   .compete .panel-card { padding: 16px 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mc, .mc-media img, .bar i, .link-btn span, .btn.cta span { transition: none; }
+  .mc, .mc-media img, .mc-media .mc-overlay, .bar i, .link-btn span, .btn.cta span { transition: none; }
   .mc:hover { transform: none; }
 }
 /* Display type stretch (after shorthands) */

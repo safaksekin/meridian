@@ -23,19 +23,15 @@ function langMenu(onChange: () => void): HTMLElement {
     setLang(select.value as Lang);
     onChange();
   });
-  return h(
-    'label',
-    { class: 'lang-menu' },
-    h('span', { class: 'lang-globe', 'aria-hidden': 'true' }, '🌐'),
-    select,
-    h('span', { class: 'lang-caret', 'aria-hidden': 'true' }, '▾'),
-  );
+  return h('label', { class: 'lang-menu' }, select, h('span', { class: 'lang-caret', 'aria-hidden': 'true' }, '▾'));
 }
 
+const onHome = () => location.hash.replace(/^#\/?/, '') === '';
+const scrollMode = (): ScrollBehavior => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
+
 function goHomeAndScroll(id: string) {
-  const onHome = location.hash.replace(/^#\/?/, '') === '';
-  if (onHome) {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (onHome()) {
+    document.getElementById(id)?.scrollIntoView({ behavior: scrollMode(), block: 'start' });
     return;
   }
   try {
@@ -58,6 +54,70 @@ export function consumeScroll() {
   if (id) requestAnimationFrame(() => document.getElementById(id!)?.scrollIntoView({ block: 'start' }));
 }
 
+/** Home sections in the header. The underline slides to the clicked link and follows the scroll position. */
+function topNav(): HTMLElement {
+  const items = [
+    { label: t('navExplore'), id: '' },
+    { label: t('navDaily'), id: 'games' },
+    { label: t('navRecords'), id: 'records' },
+  ];
+  const ink = h('span', { class: 'nav-ink', 'aria-hidden': 'true' });
+  let active = 0;
+  let clickScroll = false; // a click is scrolling the page: the underline stays on the clicked link
+  let settle = 0;
+  const place = () => {
+    const el = links[active];
+    ink.style.width = `${el.offsetWidth}px`;
+    ink.style.transform = `translateX(${el.offsetLeft}px)`;
+  };
+  const setActive = (i: number) => {
+    active = i;
+    links.forEach((l, j) => l.classList.toggle('active', j === i));
+    place();
+  };
+  const settleSoon = () => {
+    clearTimeout(settle);
+    settle = window.setTimeout(() => (clickScroll = false), 160);
+  };
+  const links: HTMLElement[] = items.map((it, i) =>
+    h(
+      'button',
+      {
+        class: 'nav-link',
+        type: 'button',
+        onclick: () => {
+          clickScroll = true;
+          settleSoon();
+          setActive(i);
+          if (it.id) goHomeAndScroll(it.id);
+          else window.scrollTo({ top: 0, behavior: scrollMode() });
+        },
+      },
+      it.label,
+    ),
+  );
+  const nav = h('nav', { class: 'top-nav', 'aria-label': 'Meridian' }, ...links, ink);
+  const onScroll = () => {
+    if (!nav.isConnected) return window.removeEventListener('scroll', onScroll);
+    if (clickScroll) return settleSoon();
+    let i = 0;
+    items.forEach((it, j) => {
+      const el = it.id ? document.getElementById(it.id) : null;
+      if (el && el.getBoundingClientRect().top <= innerHeight * 0.4) i = j;
+    });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2 && scrollY > 0) i = items.length - 1;
+    if (i !== active) setActive(i);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  // Sizes are known once the nav is in the page (and change when the web font arrives).
+  new ResizeObserver(() => {
+    place();
+    requestAnimationFrame(() => nav.classList.add('ready'));
+  }).observe(nav);
+  setActive(0);
+  return nav;
+}
+
 function avatar(): HTMLElement {
   const btn = h('button', { class: 'avatar', type: 'button' }) as HTMLButtonElement;
   const paint = () => {
@@ -75,6 +135,11 @@ export function header(opts: { title?: string; back?: boolean; help?: () => void
   const brand = h('a', { href: '#/', class: 'brand', 'aria-label': 'Meridian' });
   brand.innerHTML = `<span class="brand-mark">${LOGO}</span>`;
   brand.append(h('span', { class: 'brand-text' }, h('span', { class: 'brand-name' }, opts.back && opts.title ? opts.title : 'Meridian')));
+  brand.addEventListener('click', (e) => {
+    if (!onHome()) return;
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: scrollMode() });
+  });
   const p = progressSummary();
   const streakChip = h('a', { href: '#/', class: 'top-chip streak', title: t('streakTitle') }, `🔥 ${t('streakDays', { n: p.streak })}`, h('span', { class: 'chev', 'aria-hidden': 'true' }, '›'));
   streakChip.addEventListener('click', (e) => {
@@ -90,17 +155,7 @@ export function header(opts: { title?: string; back?: boolean; help?: () => void
     streakChip.classList.add('bump');
   };
   window.addEventListener('meridian:progress', refresh);
-  const navLink = (label: string, on: () => void, active = false) =>
-    h('button', { class: `nav-link${active ? ' active' : ''}`, type: 'button', onclick: on }, label);
-  const nav = opts.back
-    ? null
-    : h(
-        'nav',
-        { class: 'top-nav', 'aria-label': 'Meridian' },
-        navLink(t('navExplore'), () => window.scrollTo({ top: 0, behavior: 'smooth' }), true),
-        navLink(t('navDaily'), () => goHomeAndScroll('games')),
-        navLink(t('navRecords'), () => goHomeAndScroll('records')),
-      );
+  const nav = opts.back ? null : topNav();
   return h(
     'header',
     { class: 'top' },

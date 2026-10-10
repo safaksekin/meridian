@@ -10,7 +10,6 @@ import { consumeScroll } from './chrome';
 
 const t = makeT({
   en: {
-    kicker: 'Daily challenge',
     title: 'How well do you know the world?',
     sub: 'A new place every day. Six different games. One world.',
     explore: 'Explore all games',
@@ -76,7 +75,6 @@ const t = makeT({
     cat_tripoint: 'Border geography',
   },
   tr: {
-    kicker: 'Günlük meydan okuma',
     title: 'Dünyayı ne kadar iyi tanıyorsun?',
     sub: 'Her gün yeni bir yer. Altı farklı oyun. Tek bir dünya.',
     explore: 'Tüm oyunları keşfet',
@@ -154,14 +152,6 @@ const META: Record<string, { min: number; diff: 1 | 2 | 3 }> = {
 };
 const DIFF_LABEL = ['', 'easy', 'medium', 'hard'];
 
-const EPOCH = Date.UTC(2026, 9, 10);
-function dateOfDay(day: number): Date {
-  return new Date(EPOCH + (day - 1) * 86400000);
-}
-function fmtDate(day: number, opts: Intl.DateTimeFormatOptions): string {
-  return dateOfDay(day).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-GB', { ...opts, timeZone: 'UTC' });
-}
-
 const NS = () => (lang === 'tr' ? ['K', 'G'] : ['N', 'S']);
 const EW = () => (lang === 'tr' ? ['D', 'B'] : ['E', 'W']);
 
@@ -206,10 +196,13 @@ function compassRose(): string {
 function heroArt(): HTMLElement {
   const [px, py] = heroXY(BCN[0], BCN[1]);
   const art = h('div', { class: 'hero-art', 'aria-hidden': 'true' });
+  // .hero-stage has the image's own frame (see home.css), so the pin stays on Barcelona however the map is cropped.
   art.innerHTML = `
     <img class="hero-map" src="img/hero-europe.jpg" alt="" width="1600" height="902" fetchpriority="high">
-    <svg class="hero-route" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M${px} ${py} C ${px + 14} ${py - 30}, ${px + 30} ${py - 52}, 78 22" vector-effect="non-scaling-stroke"/></svg>
-    <span class="hero-pin" style="left:${px}%;top:${py}%"></span>
+    <div class="hero-clip"><div class="hero-stage">
+      <svg class="hero-route" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M${px} ${py} C ${px + 9} ${py - 26}, ${px + 19} ${py - 40}, 66 26" vector-effect="non-scaling-stroke"/></svg>
+      <span class="hero-pin" style="left:${px}%;top:${py}%"></span>
+    </div></div>
     <span class="hero-rose">${compassRose()}</span>`;
   const photo = h(
     'figure',
@@ -340,7 +333,6 @@ export function renderHome(day: number): HTMLElement {
   const done = MODES.filter((m) => getStats(m.id).history[day]).length;
   const next = MODES.find((m) => !getStats(m.id).history[day]);
   const p = progressSummary();
-  const dateShort = fmtDate(day, { day: 'numeric', month: 'long' }).toLocaleUpperCase(lang === 'tr' ? 'tr-TR' : 'en-GB');
 
   const hero = h(
     'section',
@@ -348,7 +340,6 @@ export function renderHome(day: number): HTMLElement {
     h(
       'div',
       { class: 'hero-copy' },
-      h('p', { class: 'kicker' }, `${dateShort} · ${t('kicker')}`),
       h('h1', {}, t('title')),
       h('p', { class: 'hero-sub' }, t('sub')),
       h(

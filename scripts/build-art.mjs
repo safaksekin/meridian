@@ -1,8 +1,14 @@
-// Generates vector card art from our own data: public/img/card-mental.svg (Europe as a purple
-// "constellation": country shapes, label points as stars, and a few connecting lines).
+// Generates vector card art from our own data:
+// - public/img/card-mental.svg: Europe as a purple "constellation" (country shapes, label points
+//   as stars, and a few connecting lines);
+// - public/img/card-tripoint.svg: three tinted countries and their real borders meeting at a
+//   tripoint, over a satellite base (run scripts/build-images.mjs first; needs data-raw/).
 import { readFileSync, writeFileSync } from 'node:fs';
 import { feature, mesh } from 'topojson-client';
-import { geoAzimuthalEqualArea, geoPath } from 'd3-geo';
+import { topology } from 'topojson-server';
+import { geoAzimuthalEqualArea, geoIdentity, geoPath } from 'd3-geo';
+import { loadFeatures, mergeByCode } from './lib/countries-src.mjs';
+import { TRIPOINT, TRIPOINT_BBOX, TRIPOINT_COUNTRIES } from './lib/tripoint-card.mjs';
 
 const world = JSON.parse(readFileSync(new URL('../public/data/world.json', import.meta.url)));
 const countries = JSON.parse(readFileSync(new URL('../public/data/countries.json', import.meta.url)));
@@ -38,3 +44,34 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">
 </svg>`;
 writeFileSync(new URL('../public/img/card-mental.svg', import.meta.url), svg);
 console.log('card-mental.svg', svg.length, 'bytes,', stars.length, 'stars,', links.length, 'links');
+
+// ---------------------------------------------------------------- card-tripoint.svg
+{
+  const [west, south, east, north] = TRIPOINT_BBOX;
+  // The base image is a plain lon/lat crop, so the frame maps linearly onto the card.
+  const px = ([lon, lat]) => [((lon - west) / (east - west)) * W, ((north - lat) / (north - south)) * H];
+  const near = (ring) => ring.some(([lon, lat]) => lon > west - 1 && lon < east + 1 && lat > south - 1 && lat < north + 1);
+  const feats = mergeByCode(loadFeatures('10m'))
+    .map((f) => ({ type: 'Feature', properties: { code: f.code }, geometry: { type: 'MultiPolygon', coordinates: f.geometry.coordinates.filter((poly) => near(poly[0])).map((poly) => poly.map((ring) => ring.map(px))) } }))
+    .filter((f) => f.geometry.coordinates.length);
+  const topo = topology({ c: { type: 'FeatureCollection', features: feats } }, 1e6);
+  const clip = geoPath(geoIdentity().clipExtent([[-4, -4], [W + 4, H + 4]])).digits(1);
+  const main = (g) => TRIPOINT_COUNTRIES.includes(g.properties.code);
+  const shape = (code) => clip(feats.find((x) => x.properties.code === code)) ?? '';
+  const minor = clip(mesh(topo, topo.objects.c, (a, b) => a !== b && !(main(a) && main(b)))) ?? '';
+  const major = clip(mesh(topo, topo.objects.c, (a, b) => a !== b && main(a) && main(b))) ?? '';
+  const [tx, ty] = px(TRIPOINT).map(f);
+  const base = readFileSync(new URL('../data-raw/img/card-tripoint.base.jpg', import.meta.url)).toString('base64');
+  const tints = ['#2373f4', '#ffb020', '#ef476f'];
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">
+<defs><filter id="relief" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values=".15"/><feComponentTransfer><feFuncR type="linear" slope="1.7" intercept=".06"/><feFuncG type="linear" slope="1.7" intercept=".06"/><feFuncB type="linear" slope="1.7" intercept=".06"/></feComponentTransfer></filter></defs>
+<image href="data:image/jpeg;base64,${base}" width="${W}" height="${H}" preserveAspectRatio="none" filter="url(#relief)"/>
+<rect width="${W}" height="${H}" fill="#0e1d35" fill-opacity=".22"/>
+${TRIPOINT_COUNTRIES.map((c, i) => `<path d="${shape(c)}" fill="${tints[i]}" fill-opacity=".44"/>`).join('\n')}
+<g fill="none" stroke="#fff" stroke-linejoin="round" stroke-linecap="round"><path d="${minor}" stroke-opacity=".75" stroke-width="1.4"/><path d="${major}" stroke-width="3.4"/></g>
+<circle cx="${tx}" cy="${ty}" r="34" fill="#fff" fill-opacity=".14" stroke="#fff" stroke-opacity=".9" stroke-width="2.4"/>
+<circle cx="${tx}" cy="${ty}" r="12" fill="#fff"/><circle cx="${tx}" cy="${ty}" r="5.5" fill="#0e1d35"/>
+</svg>`;
+  writeFileSync(new URL('../public/img/card-tripoint.svg', import.meta.url), svg);
+  console.log('card-tripoint.svg', Math.round(svg.length / 1024), 'KB,', feats.map((x) => x.properties.code).join(' '));
+}

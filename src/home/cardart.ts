@@ -1,5 +1,5 @@
-// Static artwork for the home cards: photo per mode (public/img, see scripts/build-images.mjs),
-// a light vector overlay that hints at the mechanic, and a line icon.
+// Static artwork for the home cards: photo per mode (public/img, see scripts/build-images.mjs and
+// scripts/build-art.mjs), a light vector overlay that hints at the mechanic, and a line icon.
 
 export const IMG: Record<string, string> = {
   beeline: 'img/card-beeline.jpg',
@@ -7,7 +7,7 @@ export const IMG: Record<string, string> = {
   mental: 'img/card-mental.svg',
   headcount: 'img/card-headcount.jpg',
   hinterland: 'img/card-hinterland.jpg',
-  tripoint: 'img/card-tripoint.jpg',
+  tripoint: 'img/card-tripoint.svg',
 };
 
 const svg = (body: string) =>
@@ -29,12 +29,10 @@ export const OVERLAYS: Record<string, string> = {
     `<g fill="none" stroke="#ffd36a"><circle cx="300" cy="190" r="34" stroke-width="3"/><circle cx="300" cy="190" r="62" stroke-width="1.6" opacity=".6"/><circle cx="300" cy="190" r="94" stroke-width="1" opacity=".35"/><circle cx="520" cy="300" r="22" stroke-width="2.4" opacity=".8"/><circle cx="520" cy="300" r="44" stroke-width="1.2" opacity=".4"/></g><circle cx="300" cy="190" r="6" fill="#ffd36a"/>`,
   ),
   hinterland: svg(
-    `<g fill="none" stroke="#fff" stroke-width="2.4"><circle cx="455" cy="372" r="18"/><path d="M455 342v14M455 388v14M425 372h14M471 372h14"/></g><g transform="translate(482 318)"><rect width="124" height="34" rx="6" fill="rgba(20,28,40,.78)" stroke="rgba(255,255,255,.55)"/><text x="62" y="23" text-anchor="middle" fill="#fff" font-family="Archivo, sans-serif" font-size="17" font-weight="600">Yeşilköy</text></g>`,
+    `<g fill="none" stroke="#fff" stroke-width="2.4"><circle cx="438" cy="212" r="18"/><path d="M438 182v14M438 228v14M408 212h14M454 212h14"/></g><g transform="translate(466 158)"><rect width="138" height="34" rx="6" fill="rgba(20,28,40,.78)" stroke="rgba(255,255,255,.55)"/><text x="69" y="23" text-anchor="middle" fill="#fff" font-family="Archivo, sans-serif" font-size="17" font-weight="600">Castelnuovo</text></g>`,
   ),
-  tripoint: svg(
-    `<circle cx="400" cy="250" r="170" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.5"/><path d="M330 160 L520 205 L410 380 Z" fill="rgba(255,255,255,.08)" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>` +
-      [[330, 160], [520, 205], [410, 380]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="10" fill="#fff"/><circle cx="${x}" cy="${y}" r="4.5" fill="#0f6d73"/>`).join(''),
-  ),
+  // The borders are part of the image itself (scripts/build-art.mjs).
+  tripoint: '',
 };
 
 const icon = (d: string) =>
