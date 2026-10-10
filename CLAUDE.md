@@ -40,7 +40,7 @@ npx tsc --noEmit     # type-check
 npm run deploy       # build + publish dist/ to gh-pages (GitHub Pages)
 npm run deploy:cf    # Cloudflare Pages copy (project meridian-geo) — not reachable from Turkey
 ```
-Deploying to GitHub Pages and pushing to `main` is the normal workflow the user approved. Commit messages end with the Co-Authored-By line from the system reminder.
+**Do not deploy after each task** (user, 2026-10-10): work is reviewed locally (`npm run dev`, keep it running and give the URL); run `npm run deploy` only when the user says "deploy", typically once at the end of the day for the whole batch. Committing and pushing to `main` stays the normal workflow (it does not change the live site). Commit messages end with the Co-Authored-By line from the system reminder.
 
 ## Testing in a real browser
 Verify UI changes in headless Chromium (Playwright) at 390 px and 1280–1440 px, light and dark, Turkish UI (`localStorage['meridian:pref:lang'] = '"tr"'`): no console errors, no horizontal overflow, play each touched mode to the end and reload (state must restore). Install Playwright in a temp folder, not in package.json.
