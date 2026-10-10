@@ -1,6 +1,6 @@
 import './style.css';
 import type { ModeContext, ModeModule } from '../types';
-import { h, resultPanel, svgEl } from '../../core/ui';
+import { h, keepOnScreen, resultPanel, svgEl } from '../../core/ui';
 import { lang, makeT } from '../../core/i18n';
 import { loadJSON } from '../../core/data';
 import { puzzleIndex } from '../../core/daily';
@@ -169,7 +169,9 @@ async function mount(ctx: ModeContext) {
   const status = h('p', { class: 'mm-status' });
   const submit = h('button', { class: 'btn primary wide mm-submit', type: 'button', onclick: () => finish() }, t('submit'));
   const after = h('div', { class: 'mm-after' });
-  ctx.root.append(h('div', { class: 'mm-game' }, head, chips, board, status, submit, after));
+  board.classList.add('split-visual');
+  ctx.root.append(h('div', { class: 'mm-game split' }, h('div', { class: 'mm-col split-pre' }, head, chips), board, h('div', { class: 'mm-col split-post' }, status, submit, after)));
+  keepOnScreen(board, () => submit);
 
   const markerEls = new Map<string, HTMLElement>();
   let suppressClickUntil = 0; // a drag that ends over the board must not also count as a tap

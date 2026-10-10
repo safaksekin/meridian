@@ -1,6 +1,6 @@
 import './style.css';
 import type { ModeModule } from '../types';
-import { autocomplete, h, resultPanel, svgEl, toast, type AutoItem } from '../../core/ui';
+import { autocomplete, h, keepOnScreen, resultPanel, svgEl, toast, type AutoItem } from '../../core/ui';
 import { fold, lang, makeT } from '../../core/i18n';
 import { loadJSON } from '../../core/data';
 import { countryName } from '../../core/countries';
@@ -192,20 +192,17 @@ const mode: ModeModule = {
       onPick: (it) => guess(it.id),
     });
 
+    const mapWrap = h('div', { class: 'st-mapwrap' }, mapBox, tabs, scale);
     ctx.root.append(
       h(
-        'section',
-        { class: 'panel st-panel' },
-        h('p', { class: 'prompt' }, h('strong', {}, t('prompt')), h('br'), h('span', { class: 'muted st-sub' }, t('sub'))),
-        h('div', { class: 'st-mapwrap' }, mapBox, tabs, scale),
-        hintBar,
-        extras,
+        'div',
+        { class: 'split' },
+        h('p', { class: 'prompt split-pre' }, h('strong', {}, t('prompt')), h('br'), h('span', { class: 'muted st-sub' }, t('sub'))),
+        h('section', { class: 'panel st-panel split-visual' }, mapWrap, hintBar),
+        h('div', { class: 'split-post' }, input.el, left, extras, guessList, after),
       ),
-      input.el,
-      left,
-      guessList,
-      after,
     );
+    keepOnScreen(mapWrap, () => input.el, { under: hintBar });
 
     function setView(v: 'crop' | 'zoom') {
       view = v;

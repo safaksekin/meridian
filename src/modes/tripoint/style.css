@@ -34,7 +34,7 @@
 }
 
 .mode-tripoint .tp-mapwrap { padding: 8px; }
-.mode-tripoint .tp-svg { display: block; width: 100%; max-width: 520px; height: auto; margin: 0 auto; }
+.mode-tripoint .tp-svg { display: block; width: 100%; max-width: min(520px, var(--fit, 520px)); height: auto; margin: 0 auto; }
 .mode-tripoint .tp-disc { fill: var(--surface-2); }
 .mode-tripoint .tp-ring { fill: none; stroke: var(--line); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .mode-tripoint .tp-border,

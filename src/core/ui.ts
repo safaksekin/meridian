@@ -162,6 +162,42 @@ export function autocomplete(opts: {
   };
 }
 
+/**
+ * Single-screen rule: keeps `until` (the last control the player needs) on the first screen by
+ * capping the size of a square visual (map, canvas) above it. Sets `--fit` on the visual; its CSS
+ * uses that as a max-width. `under` is something directly below the visual that must stay visible
+ * too, even when the controls sit beside it. Re-fits when the window or the page content changes,
+ * and stops by itself once the visual leaves the page.
+ */
+export function keepOnScreen(visual: HTMLElement | SVGElement, until: () => Element | null, opts: { under?: Element; minSize?: number } = {}): void {
+  let frame = 0;
+  const fit = () => {
+    if (!visual.isConnected) return stop();
+    const box = visual.getBoundingClientRect();
+    const ctl = until()?.getBoundingClientRect();
+    if (!ctl || !ctl.height || !box.height) return visual.style.removeProperty('--fit');
+    // Controls stacked under the visual eat into its height; controls beside it (wide layout) do not.
+    const stacked = ctl.left < box.right - 1 && ctl.right > box.left + 1;
+    const under = opts.under?.getBoundingClientRect();
+    const below = Math.max(0, stacked ? ctl.bottom - box.bottom : 0, under?.height ? under.bottom - box.bottom : 0);
+    const room = window.innerHeight - (box.top + window.scrollY) - below - 12;
+    const next = `${Math.max(opts.minSize ?? 200, Math.floor(room))}px`;
+    if (visual.style.getPropertyValue('--fit') !== next) visual.style.setProperty('--fit', next);
+  };
+  const schedule = () => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(fit);
+  };
+  const observer = new ResizeObserver(schedule);
+  const stop = () => {
+    observer.disconnect();
+    window.removeEventListener('resize', schedule);
+  };
+  observer.observe(visual.closest('main') ?? document.body);
+  window.addEventListener('resize', schedule);
+  fit();
+}
+
 export function modal(title: string, body: Node, onClose?: () => void): () => void {
   const close = () => {
     overlay.remove();

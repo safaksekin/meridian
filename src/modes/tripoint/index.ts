@@ -1,7 +1,7 @@
 import './style.css';
 import { geoOrthographic } from 'd3-geo';
 import type { ModeModule } from '../types';
-import { h, svgEl, autocomplete, resultPanel, toast } from '../../core/ui';
+import { h, svgEl, autocomplete, keepOnScreen, resultPanel, toast } from '../../core/ui';
 import { makeT, lang } from '../../core/i18n';
 import { puzzleIndex } from '../../core/daily';
 import { loadJSON } from '../../core/data';
@@ -267,13 +267,15 @@ const mode: ModeModule = {
     const play = h('div', { class: 'tp-play' }, slotRow, ac.el, checkBtn);
     const resultBox = h('div');
     ctx.root.append(
-      h('p', { class: 'prompt' }, t('prompt')),
-      h('div', { class: 'panel tp-mapwrap' }, map.svg),
-      status,
-      play,
-      rows,
-      resultBox,
+      h(
+        'div',
+        { class: 'split' },
+        h('p', { class: 'prompt split-pre' }, t('prompt')),
+        h('div', { class: 'panel tp-mapwrap split-visual' }, map.svg),
+        h('div', { class: 'split-post' }, status, play, rows, resultBox),
+      ),
     );
+    keepOnScreen(map.svg, () => checkBtn);
 
     function submit() {
       if (done() || slots.includes(null)) return;
