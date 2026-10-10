@@ -4,7 +4,7 @@ import { lang, setLang, t, type Lang } from '../core/i18n';
 import { LOGO } from './art';
 import { TEST_MODE } from '../core/config';
 import { dayNumber, todayNumber } from '../core/daily';
-import { clearGame } from '../core/storage';
+import { clearGame, setPref } from '../core/storage';
 import { progressSummary } from '../core/progress';
 import { editNickname, getNickname } from '../core/challenge';
 
@@ -24,6 +24,35 @@ function langMenu(onChange: () => void): HTMLElement {
     onChange();
   });
   return h('label', { class: 'lang-menu' }, select, h('span', { class: 'lang-caret', 'aria-hidden': 'true' }, '▾'));
+}
+
+const line = (d: string) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const SUN = line('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>');
+const MOON = line('<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>');
+
+/** Light / dark switch. Without a choice the site follows the device (style.css); index.html applies a saved choice before first paint. */
+function themeToggle(): HTMLElement {
+  const root = document.documentElement;
+  const device = () => (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const now = () => root.dataset.theme ?? device();
+  const btn = h('button', { class: 'icon-btn theme-btn', type: 'button' }) as HTMLButtonElement;
+  const paint = () => {
+    const dark = now() === 'dark';
+    btn.innerHTML = dark ? SUN : MOON;
+    btn.title = t(dark ? 'themeLight' : 'themeDark');
+    btn.setAttribute('aria-label', btn.title);
+  };
+  btn.addEventListener('click', () => {
+    const next = now() === 'dark' ? 'light' : 'dark';
+    // Choosing what the device already uses drops the override, so the site follows the device again.
+    if (next === device()) delete root.dataset.theme;
+    else root.dataset.theme = next;
+    setPref('theme', root.dataset.theme ?? 'auto');
+    paint();
+  });
+  paint();
+  return btn;
 }
 
 const onHome = () => location.hash.replace(/^#\/?/, '') === '';
@@ -158,7 +187,7 @@ export function header(opts: { title?: string; back?: boolean; help?: () => void
   const nav = opts.back ? null : topNav();
   return h(
     'header',
-    { class: 'top' },
+    { class: `top${opts.back ? ' in-game' : ''}` },
     h('div', { class: 'top-left' }, opts.back ? h('a', { href: '#/', class: 'icon-btn', 'aria-label': t('back') }, '←') : null, brand, nav),
     h(
       'div',
@@ -166,6 +195,7 @@ export function header(opts: { title?: string; back?: boolean; help?: () => void
       streakChip,
       opts.help ? h('button', { class: 'icon-btn', 'aria-label': t('howTo'), onclick: opts.help }, '?') : null,
       opts.back ? null : avatar(),
+      themeToggle(),
       langMenu(opts.onLang),
     ),
   );

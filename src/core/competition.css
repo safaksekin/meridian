@@ -52,9 +52,7 @@
 .cmp-xp-bar span { display: block; height: 100%; border-radius: inherit; background: var(--gold, #d4a017); transition: width 0.6s ease; }
 .cmp-xp-sub { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; color: var(--muted); font-size: 0.78rem; }
 .cmp-streak { color: color-mix(in srgb, var(--gold, #d4a017) 75%, var(--text)); font-weight: 700; }
-.cmp-xp.level-up .cmp-xp-bar span { animation: cmp-glow 1.2s ease 2; }
-@keyframes cmp-glow { 50% { box-shadow: 0 0 10px var(--gold, #d4a017); } }
-@media (prefers-reduced-motion: reduce) { .cmp-xp-bar span { transition: none; } .cmp-xp.level-up .cmp-xp-bar span { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .cmp-xp-bar span { transition: none; } }
 
 /* Nickname dialog */
 .cmp-nick p { margin: 0 0 10px; font-size: 0.9rem; }

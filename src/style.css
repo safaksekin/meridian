@@ -155,6 +155,12 @@ h1, h2, h3 { font-family: var(--font-display); color: var(--heading); font-weigh
   text-decoration: none; cursor: pointer; font-weight: 600;
 }
 .icon-btn:hover, .lang-btn:hover { border-color: var(--muted); }
+.icon-btn svg { width: 18px; height: 18px; display: block; }
+/* Phones: a game's header has no room for the theme switch (the title needs it); it stays on the home page. */
+@media (max-width: 520px) { .top.in-game .theme-btn { display: none; } }
+/* Small phones: make room for it on the home header. */
+@media (max-width: 440px) { .top-chip .chev { display: none; } }
+@media (max-width: 384px) { .top:not(.in-game) .brand-mark { display: none; } }
 
 /* Layout */
 main { max-width: 640px; margin: 0 auto; padding: 16px; }

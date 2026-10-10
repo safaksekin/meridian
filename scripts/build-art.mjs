@@ -32,15 +32,13 @@ const links = [['PT', 'ES'], ['ES', 'FR'], ['FR', 'GB'], ['GB', 'IE'], ['FR', 'D
 const f = (n) => n.toFixed(1);
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">
 <defs>
-<radialGradient id="bg" cx="55%" cy="45%" r="75%"><stop offset="0" stop-color="#4b2a8f"/><stop offset=".6" stop-color="#2a1660"/><stop offset="1" stop-color="#150a33"/></radialGradient>
 <linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8f6ef0"/><stop offset="1" stop-color="#5a3dbd"/></linearGradient>
-<radialGradient id="glow"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="#d9c9ff" stop-opacity=".55"/><stop offset="1" stop-color="#b79bff" stop-opacity="0"/></radialGradient>
 </defs>
-<rect width="${W}" height="${H}" fill="url(#bg)"/>
+<rect width="${W}" height="${H}" fill="#2a1660"/>
 <path d="${round(path(land) ?? '')}" fill="url(#land)" fill-opacity=".55"/>
 <path d="${round(path(borders) ?? '')}" fill="none" stroke="#d8ccff" stroke-opacity=".35" stroke-width=".8"/>
 <g stroke="#efe8ff" stroke-opacity=".7" stroke-width="1.3">${links.map(([a, b]) => `<line x1="${f(a[0])}" y1="${f(a[1])}" x2="${f(b[0])}" y2="${f(b[1])}"/>`).join('')}</g>
-<g>${stars.map((s) => `<circle cx="${f(s.p[0])}" cy="${f(s.p[1])}" r="11" fill="url(#glow)"/><circle cx="${f(s.p[0])}" cy="${f(s.p[1])}" r="3.2" fill="#fff"/>`).join('')}</g>
+<g>${stars.map((s) => `<circle cx="${f(s.p[0])}" cy="${f(s.p[1])}" r="4" fill="#fff"/>`).join('')}</g>
 </svg>`;
 writeFileSync(new URL('../public/img/card-mental.svg', import.meta.url), svg);
 console.log('card-mental.svg', svg.length, 'bytes,', stars.length, 'stars,', links.length, 'links');
@@ -69,7 +67,7 @@ console.log('card-mental.svg', svg.length, 'bytes,', stars.length, 'stars,', lin
 <rect width="${W}" height="${H}" fill="#0e1d35" fill-opacity=".22"/>
 ${TRIPOINT_COUNTRIES.map((c, i) => `<path d="${shape(c)}" fill="${tints[i]}" fill-opacity=".44"/>`).join('\n')}
 <g fill="none" stroke="#fff" stroke-linejoin="round" stroke-linecap="round"><path d="${minor}" stroke-opacity=".75" stroke-width="1.4"/><path d="${major}" stroke-width="3.4"/></g>
-<circle cx="${tx}" cy="${ty}" r="34" fill="#fff" fill-opacity=".14" stroke="#fff" stroke-opacity=".9" stroke-width="2.4"/>
+<circle cx="${tx}" cy="${ty}" r="34" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="2.4"/>
 <circle cx="${tx}" cy="${ty}" r="12" fill="#fff"/><circle cx="${tx}" cy="${ty}" r="5.5" fill="#0e1d35"/>
 </svg>`;
   writeFileSync(new URL('../public/img/card-tripoint.svg', import.meta.url), svg);
