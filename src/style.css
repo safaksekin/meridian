@@ -186,6 +186,7 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 .share-preview {
   white-space: pre-wrap; text-align: left; font: 0.95rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
   background: var(--surface-2); padding: 10px 12px; border-radius: 10px; margin: 12px 0;
+  overflow-wrap: anywhere; max-width: 100%;
 }
 .stats { margin-top: 16px; }
 .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
