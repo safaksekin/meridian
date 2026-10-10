@@ -6,6 +6,7 @@ import { TEST_MODE } from '../core/config';
 import { dayNumber, todayNumber } from '../core/daily';
 import { clearGame } from '../core/storage';
 import { progressSummary } from '../core/progress';
+import { editNickname, getNickname } from '../core/challenge';
 
 const LANGS: { id: Lang; label: string }[] = [
   { id: 'tr', label: 'Türkçe' },
@@ -31,41 +32,85 @@ function langMenu(onChange: () => void): HTMLElement {
   );
 }
 
+function goHomeAndScroll(id: string) {
+  const onHome = location.hash.replace(/^#\/?/, '') === '';
+  if (onHome) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  try {
+    sessionStorage.setItem('meridian:scrollTo', id);
+  } catch {
+    /* ignore */
+  }
+  location.hash = '#/';
+}
+
+/** Called by the home page after it renders: honours a scroll request from the header nav. */
+export function consumeScroll() {
+  let id: string | null = null;
+  try {
+    id = sessionStorage.getItem('meridian:scrollTo');
+    sessionStorage.removeItem('meridian:scrollTo');
+  } catch {
+    /* ignore */
+  }
+  if (id) requestAnimationFrame(() => document.getElementById(id!)?.scrollIntoView({ block: 'start' }));
+}
+
+function avatar(): HTMLElement {
+  const btn = h('button', { class: 'avatar', type: 'button' }) as HTMLButtonElement;
+  const paint = () => {
+    const name = getNickname();
+    btn.textContent = name ? name.trim().charAt(0).toLocaleUpperCase(lang === 'tr' ? 'tr-TR' : 'en-GB') : '?';
+    btn.title = name ? `${name} · ${t('changeName')}` : t('setName');
+    btn.setAttribute('aria-label', btn.title);
+  };
+  btn.addEventListener('click', () => editNickname(paint));
+  paint();
+  return btn;
+}
+
 export function header(opts: { title?: string; back?: boolean; help?: () => void; onLang: () => void }): HTMLElement {
   const brand = h('a', { href: '#/', class: 'brand', 'aria-label': 'Meridian' });
   brand.innerHTML = `<span class="brand-mark">${LOGO}</span>`;
-  brand.append(
-    h(
-      'span',
-      { class: 'brand-text' },
-      h('span', { class: 'brand-name' }, opts.back && opts.title ? opts.title : 'Meridian'),
-      opts.back ? null : h('span', { class: 'brand-sub' }, t('brandSub')),
-    ),
-  );
+  brand.append(h('span', { class: 'brand-text' }, h('span', { class: 'brand-name' }, opts.back && opts.title ? opts.title : 'Meridian')));
   const p = progressSummary();
-  const streakChip = h('a', { href: '#/', class: 'top-chip streak', title: t('streakTitle') }, `🔥 ${p.streak}`);
-  const levelChip = h('a', { href: '#/', class: 'top-chip level', title: p.levelTitle }, `LV ${p.level}`);
+  const streakChip = h('a', { href: '#/', class: 'top-chip streak', title: t('streakTitle') }, `🔥 ${t('streakDays', { n: p.streak })}`, h('span', { class: 'chev', 'aria-hidden': 'true' }, '›'));
+  streakChip.addEventListener('click', (e) => {
+    e.preventDefault();
+    goHomeAndScroll('records');
+  });
   const refresh = () => {
     if (!streakChip.isConnected) return window.removeEventListener('meridian:progress', refresh);
     const q = progressSummary();
-    streakChip.textContent = `🔥 ${q.streak}`;
-    levelChip.textContent = `LV ${q.level}`;
-    levelChip.title = q.levelTitle;
+    streakChip.firstChild!.textContent = `🔥 ${t('streakDays', { n: q.streak })}`;
     streakChip.classList.remove('bump');
     void streakChip.offsetWidth;
     streakChip.classList.add('bump');
   };
   window.addEventListener('meridian:progress', refresh);
+  const navLink = (label: string, on: () => void, active = false) =>
+    h('button', { class: `nav-link${active ? ' active' : ''}`, type: 'button', onclick: on }, label);
+  const nav = opts.back
+    ? null
+    : h(
+        'nav',
+        { class: 'top-nav', 'aria-label': 'Meridian' },
+        navLink(t('navExplore'), () => window.scrollTo({ top: 0, behavior: 'smooth' }), true),
+        navLink(t('navDaily'), () => goHomeAndScroll('games')),
+        navLink(t('navRecords'), () => goHomeAndScroll('records')),
+      );
   return h(
     'header',
     { class: 'top' },
-    h('div', { class: 'top-left' }, opts.back ? h('a', { href: '#/', class: 'icon-btn', 'aria-label': t('back') }, '←') : null, brand),
+    h('div', { class: 'top-left' }, opts.back ? h('a', { href: '#/', class: 'icon-btn', 'aria-label': t('back') }, '←') : null, brand, nav),
     h(
       'div',
       { class: 'top-right' },
       streakChip,
-      levelChip,
       opts.help ? h('button', { class: 'icon-btn', 'aria-label': t('howTo'), onclick: opts.help }, '?') : null,
+      opts.back ? null : avatar(),
       langMenu(opts.onLang),
     ),
   );

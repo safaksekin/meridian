@@ -304,3 +304,22 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 /* Display type: Archivo, expanded and heavy (set after any `font` shorthand, which resets stretch). */
 .brand-name, .prompt strong, .stat strong, .result h2, .modal-head h2 { font-stretch: 112%; font-weight: 800; letter-spacing: -0.02em; }
 .kicker, .day-label, .top-chip, .countdown, .share-preview, .mono { letter-spacing: 0.06em; }
+
+/* Header nav + avatar */
+.top { gap: 12px; }
+.top-left { gap: 10px; }
+.top-nav { display: flex; align-items: stretch; gap: 4px; margin-left: 28px; align-self: stretch; }
+.nav-link {
+  border: 0; background: none; padding: 0 12px; font-weight: 600; font-size: 0.9rem; color: var(--muted); cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -11px; padding-bottom: 9px;
+}
+.nav-link:hover { color: var(--heading); }
+.nav-link.active { color: var(--heading); border-bottom-color: var(--accent); }
+.top-chip.streak { border-radius: 999px; gap: 4px; font-family: var(--font-sans); letter-spacing: 0; font-size: 0.8rem; }
+.top-chip .chev { opacity: 0.6; font-size: 1rem; line-height: 1; }
+.avatar {
+  width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--surface); cursor: pointer; font-weight: 800; color: #fff;
+  background: linear-gradient(135deg, #2864dc, #0f6d73); box-shadow: 0 0 0 1px var(--line-strong);
+}
+.lang-menu { border-radius: 999px; }
+@media (max-width: 860px) { .top-nav { display: none; } }

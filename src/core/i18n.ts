@@ -58,6 +58,12 @@ const CORE: Record<Lang, Dict> = {
     newIn: 'New puzzles in',
     brandSub: 'Geography & discovery',
     streakTitle: 'Daily streak',
+    streakDays: '{n} days',
+    navExplore: 'Explore',
+    navDaily: 'Daily challenge',
+    navRecords: 'Records',
+    changeName: 'change name',
+    setName: 'Set your explorer name',
   },
   tr: {
     tagline: 'Her gün altı coğrafya bulmacası',
@@ -99,6 +105,12 @@ const CORE: Record<Lang, Dict> = {
     newIn: 'Yeni bulmacalara',
     brandSub: 'Coğrafya & keşif',
     streakTitle: 'Günlük seri',
+    streakDays: '{n} gün',
+    navExplore: 'Keşfet',
+    navDaily: 'Günlük meydan okuma',
+    navRecords: 'Rekorlar',
+    changeName: 'adını değiştir',
+    setName: 'Kaşif adını belirle',
   },
 };
 
