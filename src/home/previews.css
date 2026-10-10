@@ -1,0 +1,88 @@
+/* Home card previews: "Editorial Cartography" chart panels. The panel stays dark navy in both
+   site themes; every colour is a custom property so the page can retheme it. */
+.pv {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--pv-bg, #0e1d35);
+  color: var(--pv-ink, #e8edf6);
+  overflow: hidden;
+}
+.pv * { vector-effect: non-scaling-stroke; }
+.pv .pv-bg { fill: var(--pv-bg, #0e1d35); }
+
+/* chart furniture */
+.pv .pv-grid { fill: none; stroke: var(--pv-dim, rgba(232, 237, 246, 0.18)); stroke-width: 0.5px; opacity: 0.38; }
+.pv .pv-grid-major { opacity: 0.75; }
+.pv .pv-neat { fill: none; stroke: var(--pv-dim, rgba(232, 237, 246, 0.18)); stroke-width: 0.8px; }
+.pv .pv-ticks { fill: none; stroke: var(--pv-dim, rgba(232, 237, 246, 0.18)); stroke-width: 0.8px; opacity: 0.9; }
+.pv .pv-range { fill: none; stroke: var(--pv-dim, rgba(232, 237, 246, 0.18)); stroke-width: 0.6px; stroke-dasharray: 2 3; }
+.pv .pv-glyph { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 1.2px; stroke-linecap: round; stroke-linejoin: round; opacity: 0.85; }
+.pv .pv-dot-gold { fill: var(--pv-accent, #f6be39); }
+.pv .pv-north { fill: var(--pv-accent, #f6be39); opacity: 0.85; }
+.pv .pv-pin { fill: var(--pv-accent, #f6be39); stroke: var(--pv-bg, #0e1d35); stroke-width: 1px; }
+.pv .pv-pin-halo { fill: color-mix(in srgb, var(--pv-accent, #f6be39) 16%, transparent); stroke: var(--pv-accent, #f6be39); stroke-width: 0.7px; stroke-opacity: 0.7; }
+
+/* beeline */
+.pv .pv-sphere-hi { stop-color: color-mix(in srgb, var(--pv-accent2, #6ea0ff) 22%, var(--pv-bg, #0e1d35)); }
+.pv .pv-sphere-lo { stop-color: color-mix(in srgb, var(--pv-bg, #0e1d35) 82%, black); }
+.pv .pv-grat { fill: none; stroke: var(--pv-ink, #e8edf6); stroke-width: 0.5px; opacity: 0.13; }
+.pv .pv-land { fill: color-mix(in srgb, var(--pv-ink, #e8edf6) 15%, transparent); stroke: none; }
+.pv .pv-borders { fill: none; stroke: var(--pv-ink, #e8edf6); stroke-width: 0.5px; opacity: 0.3; stroke-linejoin: round; }
+.pv .pv-limb { fill: none; stroke: color-mix(in srgb, var(--pv-accent2, #6ea0ff) 60%, var(--pv-ink, #e8edf6)); stroke-width: 1px; opacity: 0.55; }
+.pv .pv-bezel { fill: color-mix(in srgb, var(--pv-bg, #0e1d35) 35%, transparent); stroke: var(--pv-ink, #e8edf6); stroke-width: 0.6px; opacity: 0.6; }
+.pv .pv-bezel-ticks { fill: none; stroke: var(--pv-ink, #e8edf6); stroke-width: 0.7px; opacity: 0.55; }
+.pv .pv-route { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 1.4px; stroke-dasharray: 3 2.4; stroke-linecap: round; }
+.pv .pv-arrowhead { fill: var(--pv-accent, #f6be39); }
+
+/* streets */
+.pv .pv-street { fill: none; stroke: var(--pv-ink, #e8edf6); stroke-width: 0.7px; opacity: 0.62; stroke-linecap: round; stroke-linejoin: round; }
+.pv .pv-street-major { stroke-width: 1.2px; opacity: 0.92; }
+.pv .pv-reticle { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 1px; }
+.pv .pv-reticle circle { fill: color-mix(in srgb, var(--pv-bg, #0e1d35) 55%, transparent); }
+
+/* mental */
+.pv .pv-sheet { fill: color-mix(in srgb, var(--pv-ink, #e8edf6) 4%, transparent); stroke: var(--pv-dim, rgba(232, 237, 246, 0.18)); stroke-width: 0.8px; }
+.pv .pv-reg { fill: none; stroke: var(--pv-accent2, #6ea0ff); stroke-width: 0.8px; opacity: 0.8; }
+.pv .pv-flag { font-size: 13px; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+
+/* headcount */
+.pv .pv-seadot { fill: var(--pv-ink, #e8edf6); opacity: 0.16; }
+.pv .pv-pop { fill: none; stroke-linecap: round; }
+.pv .pv-pop0 { stroke: var(--pv-accent2, #6ea0ff); stroke-width: 1px; opacity: 0.45; }
+.pv .pv-pop1 { stroke: var(--pv-accent2, #6ea0ff); stroke-width: 1.4px; opacity: 0.8; }
+.pv .pv-pop2 { stroke: color-mix(in srgb, var(--pv-accent2, #6ea0ff) 45%, var(--pv-ink, #e8edf6)); stroke-width: 1.8px; }
+.pv .pv-pop3 { stroke: var(--pv-ink, #e8edf6); stroke-width: 2.1px; }
+.pv .pv-pop4 { stroke: var(--pv-accent, #f6be39); stroke-width: 2.3px; }
+.pv .pv-lens { fill: color-mix(in srgb, var(--pv-accent, #f6be39) 10%, transparent); }
+.pv .pv-lens-ring { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 1.2px; stroke-dasharray: 3 2.2; }
+.pv .pv-lens-radius { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 0.8px; opacity: 0.8; }
+.pv .pv-lens-cross { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 1px; }
+
+/* hinterland */
+.pv .pv-contour { fill: none; stroke: var(--pv-accent2, #6ea0ff); stroke-width: 0.6px; opacity: 0.32; }
+.pv .pv-contour-index { stroke-width: 1px; opacity: 0.5; }
+.pv .pv-lane { fill: none; stroke: var(--pv-ink, #e8edf6); stroke-width: 0.7px; stroke-dasharray: 1.5 2.5; opacity: 0.35; }
+.pv .pv-house { fill: var(--pv-bg, #0e1d35); stroke: var(--pv-ink, #e8edf6); stroke-width: 0.9px; stroke-linejoin: round; opacity: 0.85; }
+.pv .pv-name {
+  fill: var(--pv-ink, #e8edf6);
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.01em;
+  stroke: var(--pv-bg, #0e1d35);
+  stroke-width: 7px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}
+.pv .pv-rule { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 0.8px; }
+.pv .pv-stamp-outer { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 1.2px; stroke-dasharray: 3 2; opacity: 0.9; }
+.pv .pv-stamp-inner { fill: color-mix(in srgb, var(--pv-accent, #f6be39) 8%, transparent); stroke: var(--pv-accent, #f6be39); stroke-width: 0.6px; opacity: 0.8; }
+.pv .pv-stamp-q { fill: var(--pv-accent, #f6be39); font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 22px; }
+
+/* tripoint */
+.pv .pv-disc { fill: color-mix(in srgb, var(--pv-accent2, #6ea0ff) 7%, var(--pv-bg, #0e1d35)); }
+.pv .pv-ring { fill: none; stroke: var(--pv-ink, #e8edf6); stroke-width: 0.9px; opacity: 0.55; }
+.pv .pv-border { fill: none; stroke: var(--pv-ink, #e8edf6); stroke-width: 1.2px; stroke-linejoin: round; stroke-linecap: round; }
+.pv .pv-centre-ring { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 1.3px; }
+.pv .pv-centre-ticks { fill: none; stroke: var(--pv-accent, #f6be39); stroke-width: 1px; }

@@ -235,6 +235,7 @@ const mode: ModeModule = {
           share: shareText(ctx.day, state.a.map((a) => a.pop), best, won),
           mode: ID,
           buckets: BUCKETS,
+          label: String(best),
         }),
       );
     }

@@ -8,6 +8,7 @@ import { getPref, setPref } from './core/storage';
 import { loadCountries } from './core/countries';
 import { header, testBar } from './home/chrome';
 import { renderHome } from './home/home';
+import { challengeBanner } from './core/challenge';
 
 const app = document.getElementById('app')!;
 let current: ModeModule | null = null;
@@ -28,7 +29,7 @@ async function route() {
   const root = h('main', { class: `mode mode-${def.id}` }, h('p', { class: 'muted center' }, t('loading')));
   let mod: ModeModule | null = null;
   const showHelp = () => mod && modal(t('howTo'), mod.howTo());
-  app.replaceChildren(header({ title: def.name[lang], back: true, help: showHelp, onLang: route }), ...[testBar(def.id)].filter((x): x is HTMLElement => !!x), root);
+  app.replaceChildren(header({ title: def.name[lang], back: true, help: showHelp, onLang: route }), ...[testBar(def.id), challengeBanner(def.id, day)].filter((x): x is HTMLElement => !!x), root);
   window.scrollTo(0, 0);
   try {
     await loadCountries();

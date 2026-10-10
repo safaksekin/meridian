@@ -1,6 +1,7 @@
 import { fold, t } from './i18n';
-import { msUntilTomorrow } from './daily';
+import { dayNumber, msUntilTomorrow } from './daily';
 import { getStats } from './storage';
+import { challengeComparison, competitionBlock } from './challenge';
 
 type Child = Node | string | null | undefined | false;
 
@@ -175,7 +176,8 @@ export function modal(title: string, body: Node, onClose?: () => void): () => vo
   return close;
 }
 
-async function copyShare(text: string) {
+/** Share via the native sheet on touch devices, otherwise copy to the clipboard (toast `copiedMsg`). */
+export async function copyShare(text: string, copiedMsg = t('copied')) {
   try {
     if (navigator.share && matchMedia('(pointer: coarse)').matches) {
       await navigator.share({ text });
@@ -186,7 +188,7 @@ async function copyShare(text: string) {
   }
   try {
     await navigator.clipboard.writeText(text);
-    toast(t('copied'));
+    toast(copiedMsg);
   } catch {
     prompt('', text);
   }
@@ -244,16 +246,23 @@ function liveShareText(text: string): string {
   return text.split('https://meridian.example/').join(base);
 }
 
-/** End-of-game panel: headline, mode-specific detail, share button, stats, countdown. */
-export function resultPanel(opts: { won: boolean; headline: string; detail?: Node; share: string; mode: string; buckets: string[] }): HTMLElement {
+/**
+ * End-of-game panel: headline, challenge comparison, mode-specific detail, share button,
+ * challenge-a-friend button, XP line, stats, countdown. `label` is the result label passed to
+ * recordResult (e.g. "3/6", "X/6", "74/100", "98"); it powers friend challenges.
+ */
+export function resultPanel(opts: { won: boolean; headline: string; detail?: Node; share: string; mode: string; buckets: string[]; label?: string }): HTMLElement {
   const share = liveShareText(opts.share);
+  const day = dayNumber();
   return h(
     'section',
     { class: `result ${opts.won ? 'won' : 'lost'}` },
     h('h2', {}, opts.headline),
+    challengeComparison({ mode: opts.mode, day, label: opts.label }),
     opts.detail ?? null,
     h('pre', { class: 'share-preview' }, share),
     h('button', { class: 'btn primary wide', onclick: () => copyShare(share) }, t('share')),
+    competitionBlock({ mode: opts.mode, day, won: opts.won, label: opts.label }),
     statsBlock(opts.mode, opts.buckets),
     h('p', { class: 'next' }, `${t('next')}: `, countdown()),
   );

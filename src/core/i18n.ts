@@ -56,6 +56,8 @@ const CORE: Record<Lang, Dict> = {
     today: 'Today',
     todayProgress: '{n} of 6 played today',
     newIn: 'New puzzles in',
+    brandSub: 'Geography & discovery',
+    streakTitle: 'Daily streak',
   },
   tr: {
     tagline: 'Her gün altı coğrafya bulmacası',
@@ -95,6 +97,8 @@ const CORE: Record<Lang, Dict> = {
     today: 'Bugün',
     todayProgress: 'Bugün {n}/6 oynandı',
     newIn: 'Yeni bulmacalara',
+    brandSub: 'Coğrafya & keşif',
+    streakTitle: 'Günlük seri',
   },
 };
 

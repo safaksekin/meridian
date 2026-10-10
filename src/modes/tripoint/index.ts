@@ -379,6 +379,7 @@ const mode: ModeModule = {
           share: shareText(ctx.day, rowsMarks, w),
           mode: ID,
           buckets: BUCKETS,
+          label: w ? `${guesses.length}/${MAX_GUESSES}` : `X/${MAX_GUESSES}`,
         }),
       );
     }

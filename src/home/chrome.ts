@@ -5,6 +5,7 @@ import { LOGO } from './art';
 import { TEST_MODE } from '../core/config';
 import { dayNumber, todayNumber } from '../core/daily';
 import { clearGame } from '../core/storage';
+import { progressSummary } from '../core/progress';
 
 const LANGS: { id: Lang; label: string }[] = [
   { id: 'tr', label: 'Türkçe' },
@@ -31,9 +32,30 @@ function langMenu(onChange: () => void): HTMLElement {
 }
 
 export function header(opts: { title?: string; back?: boolean; help?: () => void; onLang: () => void }): HTMLElement {
-  const brand = h('a', { href: '#/', class: 'brand' });
+  const brand = h('a', { href: '#/', class: 'brand', 'aria-label': 'Meridian' });
   brand.innerHTML = `<span class="brand-mark">${LOGO}</span>`;
-  brand.append(h('span', { class: 'brand-name' }, opts.back && opts.title ? opts.title : 'Meridian'));
+  brand.append(
+    h(
+      'span',
+      { class: 'brand-text' },
+      h('span', { class: 'brand-name' }, opts.back && opts.title ? opts.title : 'Meridian'),
+      opts.back ? null : h('span', { class: 'brand-sub' }, t('brandSub')),
+    ),
+  );
+  const p = progressSummary();
+  const streakChip = h('a', { href: '#/', class: 'top-chip streak', title: t('streakTitle') }, `🔥 ${p.streak}`);
+  const levelChip = h('a', { href: '#/', class: 'top-chip level', title: p.levelTitle }, `LV ${p.level}`);
+  const refresh = () => {
+    if (!streakChip.isConnected) return window.removeEventListener('meridian:progress', refresh);
+    const q = progressSummary();
+    streakChip.textContent = `🔥 ${q.streak}`;
+    levelChip.textContent = `LV ${q.level}`;
+    levelChip.title = q.levelTitle;
+    streakChip.classList.remove('bump');
+    void streakChip.offsetWidth;
+    streakChip.classList.add('bump');
+  };
+  window.addEventListener('meridian:progress', refresh);
   return h(
     'header',
     { class: 'top' },
@@ -41,6 +63,8 @@ export function header(opts: { title?: string; back?: boolean; help?: () => void
     h(
       'div',
       { class: 'top-right' },
+      streakChip,
+      levelChip,
       opts.help ? h('button', { class: 'icon-btn', 'aria-label': t('howTo'), onclick: opts.help }, '?') : null,
       langMenu(opts.onLang),
     ),

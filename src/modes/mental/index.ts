@@ -397,7 +397,7 @@ async function mount(ctx: ModeContext) {
       `🧠 ${t('shareScore')} ${score} · ${t('shareTilt')} ${tiltTxt}${ns == null ? '' : ` · ${t('shareNS')} ${sign(ns)}${Math.abs(ns)}%`}`,
       'https://meridian.example/#/mental',
     ].join('\n');
-    after.replaceChildren(resultPanel({ won: score >= 60, headline, detail, share, mode: MODE, buckets: BUCKETS }));
+    after.replaceChildren(resultPanel({ won: score >= 60, headline, detail, share, mode: MODE, buckets: BUCKETS, label: `${score}/100` }));
   }
 
   if (state.done) void reveal(false);

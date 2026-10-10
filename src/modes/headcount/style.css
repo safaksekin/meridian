@@ -28,7 +28,7 @@
 
 .mode-headcount .hc-labels { pointer-events: none; }
 .mode-headcount .hc-label {
-  font: 700 12px/1 Inter, system-ui, sans-serif; fill: var(--ink); text-anchor: middle;
+  font: 700 12px/1 var(--font-sans); fill: var(--ink); text-anchor: middle;
   paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round;
   transform: translateY(-6px);
 }

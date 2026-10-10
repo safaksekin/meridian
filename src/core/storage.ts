@@ -40,10 +40,10 @@ export interface ModeStats {
   history: Record<string, { won: boolean; label: string }>;
 }
 
-const EMPTY: ModeStats = { played: 0, wins: 0, streak: 0, maxStreak: 0, lastDay: 0, dist: {}, history: {} };
-
 export function getStats(mode: string): ModeStats {
-  return { ...EMPTY, ...(read<ModeStats>(`${mode}:stats`) || {}) };
+  // Fresh objects every call: a shared default would leak one mode's first result into the others.
+  const empty: ModeStats = { played: 0, wins: 0, streak: 0, maxStreak: 0, lastDay: 0, dist: {}, history: {} };
+  return { ...empty, ...(read<ModeStats>(`${mode}:stats`) || {}) };
 }
 
 /** Record a finished puzzle once. `bucket` feeds the distribution chart, `label` the home card. */
@@ -63,6 +63,11 @@ export function recordResult(mode: string, day: number, won: boolean, bucket: st
   s.dist[bucket] = (s.dist[bucket] || 0) + 1;
   s.history[day] = { won, label };
   write(`${mode}:stats`, s);
+  try {
+    window.dispatchEvent(new CustomEvent('meridian:progress'));
+  } catch {
+    /* non-browser (tests) */
+  }
   return s;
 }
 

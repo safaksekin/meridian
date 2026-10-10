@@ -215,7 +215,7 @@ const mode: ModeModule = {
           p.surprise && p.rhumb ? h('p', { class: 'bl-fact' }, t('rhumb', { list: p.rhumb.map(countryName).join(', ') })) : null,
         );
         resultSlot.replaceChildren(
-          resultPanel({ won, headline: won ? `${t('solved')} ${t('solvedIn', { n: state.rows.length })}` : t('failed'), detail, share, mode: MODE, buckets: BUCKETS }),
+          resultPanel({ won, headline: won ? `${t('solved')} ${t('solvedIn', { n: state.rows.length })}` : t('failed'), detail, share, mode: MODE, buckets: BUCKETS, label: won ? `${state.rows.length}/6` : 'X/6' }),
         );
         // show the whole route
         const mid = p.path[Math.floor(p.path.length / 2)];

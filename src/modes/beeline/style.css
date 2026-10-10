@@ -9,7 +9,7 @@
 .mode-beeline .bl-path.hint { stroke-dasharray: 4 5; }
 .mode-beeline .bl-start { fill: var(--danger); stroke: var(--surface); stroke-width: 2; }
 .mode-beeline .bl-hit { fill: var(--surface); stroke: var(--danger); stroke-width: 2; }
-.mode-beeline .bl-hit-label { font: 700 11px Inter, sans-serif; fill: var(--danger); text-anchor: middle; dominant-baseline: central; }
+.mode-beeline .bl-hit-label { font: 700 11px var(--font-sans); fill: var(--danger); text-anchor: middle; dominant-baseline: central; }
 .mode-beeline .board { display: grid; gap: 6px; margin: 8px 0; }
 .mode-beeline .bl-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
 .mode-beeline .bl-cell {

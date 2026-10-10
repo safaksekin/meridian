@@ -210,6 +210,7 @@ const mode: ModeModule = {
           share: shareText(ctx.day, state.g, target, families),
           mode: MODE,
           buckets: BUCKETS,
+          label: scoreLabel(state.g, target),
         }),
       );
     }

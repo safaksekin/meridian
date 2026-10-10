@@ -1,0 +1,62 @@
+/* Competition UI: challenge banner, challenge comparison, challenge button, XP line. */
+
+/* Banner above a mode page when the URL carries a friend's challenge */
+.cmp-banner {
+  box-sizing: border-box; display: flex; align-items: center; gap: 12px;
+  width: calc(100% - 32px); max-width: 608px; margin: 12px auto 0; padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--gold, #d4a017) 55%, var(--line));
+  border-left-width: 4px; border-radius: var(--radius, 10px);
+  background: color-mix(in srgb, var(--gold, #d4a017) 10%, var(--surface));
+  color: var(--text); box-shadow: var(--shadow, none);
+}
+.cmp-banner-icon { font-size: 1.5rem; line-height: 1; flex: none; }
+.cmp-banner-text { display: grid; gap: 2px; min-width: 0; overflow-wrap: anywhere; }
+.cmp-banner-text strong { font-weight: 700; line-height: 1.35; }
+.cmp-banner-text span { color: var(--muted); font-size: 0.85rem; }
+
+/* Head-to-head result inside the result panel */
+.cmp-vs {
+  margin: 10px 0 14px; padding: 10px 12px 12px; border-radius: var(--radius, 10px);
+  border: 1px solid var(--line); background: var(--surface-2);
+}
+.cmp-vs-tag {
+  display: inline-block; font: 700 0.68rem/1 var(--font-mono, ui-monospace, monospace);
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+}
+.cmp-vs-line { margin: 6px 0 2px; font-size: 1.05rem; overflow-wrap: anywhere; }
+.cmp-vs-line b { font-family: var(--font-mono, ui-monospace, monospace); font-variant-numeric: tabular-nums; }
+.cmp-vs-sep { color: var(--muted); }
+.cmp-vs-verdict { margin: 4px 0 0; font: 700 1.25rem/1.3 var(--font-serif, Georgia, serif); overflow-wrap: anywhere; }
+.cmp-vs.win { border-color: color-mix(in srgb, var(--gold, #d4a017) 60%, var(--line)); background: color-mix(in srgb, var(--gold, #d4a017) 12%, var(--surface)); }
+.cmp-vs.win .cmp-vs-verdict { color: color-mix(in srgb, var(--gold, #d4a017) 75%, var(--text)); }
+.cmp-vs.loss .cmp-vs-verdict { color: var(--muted); }
+
+/* Challenge button + explorer name + XP */
+.cmp { margin-top: 10px; display: grid; gap: 6px; justify-items: center; }
+.cmp-btn {
+  border-color: color-mix(in srgb, var(--gold, #d4a017) 60%, var(--line-strong, var(--line)));
+  background: color-mix(in srgb, var(--gold, #d4a017) 12%, var(--surface)); color: var(--text);
+}
+.cmp-btn:hover:not(:disabled) { border-color: var(--gold, #d4a017); background: color-mix(in srgb, var(--gold, #d4a017) 20%, var(--surface)); }
+.cmp-who { font-size: 0.8rem; color: var(--muted); overflow-wrap: anywhere; }
+.cmp-link {
+  border: 0; padding: 0; background: none; color: var(--accent); font: inherit; cursor: pointer; text-decoration: underline;
+}
+
+.cmp-xp { width: 100%; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--line); }
+.cmp-xp.practice { margin: 6px 0 0; color: var(--muted); font-size: 0.85rem; }
+.cmp-xp-line { margin: 0; font: 700 0.8rem/1.4 var(--font-mono, ui-monospace, monospace); letter-spacing: 0.03em; }
+.cmp-xp-gain { color: color-mix(in srgb, var(--gold, #d4a017) 80%, var(--text)); }
+.cmp-xp-up { color: var(--good); }
+.cmp-xp-bar { height: 6px; margin: 8px auto 6px; max-width: 320px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.cmp-xp-bar span { display: block; height: 100%; border-radius: inherit; background: var(--gold, #d4a017); transition: width 0.6s ease; }
+.cmp-xp-sub { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; color: var(--muted); font-size: 0.78rem; }
+.cmp-streak { color: color-mix(in srgb, var(--gold, #d4a017) 75%, var(--text)); font-weight: 700; }
+.cmp-xp.level-up .cmp-xp-bar span { animation: cmp-glow 1.2s ease 2; }
+@keyframes cmp-glow { 50% { box-shadow: 0 0 10px var(--gold, #d4a017); } }
+@media (prefers-reduced-motion: reduce) { .cmp-xp-bar span { transition: none; } .cmp-xp.level-up .cmp-xp-bar span { animation: none; } }
+
+/* Nickname dialog */
+.cmp-nick p { margin: 0 0 10px; font-size: 0.9rem; }
+.cmp-nick-row { display: flex; gap: 8px; }
+.cmp-nick-input { flex: 1; min-width: 0; }
