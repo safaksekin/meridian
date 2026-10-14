@@ -1,5 +1,5 @@
 import './home.css';
-import { MODES } from '../modes/registry';
+import { DAILY_MODES, MODES } from '../modes/registry';
 import { h, modal, toast } from '../core/ui';
 import { lang, makeT } from '../core/i18n';
 import { getStats } from '../core/storage';
@@ -69,6 +69,15 @@ const t = makeT({
     cat_headcount: 'Demography',
     cat_hinterland: 'Place names',
     cat_tripoint: 'Border geography',
+    fsKicker: 'Flagship game',
+    fsTitle: 'Expedition',
+    fsText: 'Fly around the world on one tank of fuel. Every destination hides behind a clue: a coastline, a population map, road signs, a street pattern. Land close and refuel, miss and fly on from wherever you came down.',
+    fsF1: '✈️ One shared run a day, free runs any time',
+    fsF2: '⛽ The fuel runs out, the run ends',
+    fsF3: '⚔️ Challenge a friend to beat your legs',
+    fsPlay: 'Set off',
+    fsDone: 'Today: {n} legs',
+    fsAgain: 'See today’s run',
   },
   tr: {
     title: 'Dünyayı ne kadar iyi tanıyorsun?',
@@ -130,6 +139,15 @@ const t = makeT({
     cat_headcount: 'Demografi',
     cat_hinterland: 'Yer adları',
     cat_tripoint: 'Sınır coğrafyası',
+    fsKicker: 'Amiral oyun',
+    fsTitle: 'Sefer',
+    fsText: 'Tek depo yakıtla dünyayı dolaş. Her durak bir ipucunun ardında: bir kıyı çizgisi, bir nüfus haritası, yol tabelaları, bir sokak dokusu. Yakına in, yakıt al; ıskalarsan indiğin yerden yola devam et.',
+    fsF1: '✈️ Her gün herkese aynı sefer, istediğin an serbest sefer',
+    fsF2: '⛽ Yakıt biterse sefer biter',
+    fsF3: '⚔️ Arkadaşına meydan oku, ayak sayını geçsin',
+    fsPlay: 'Sefere çık',
+    fsDone: 'Bugün: {n} ayak',
+    fsAgain: 'Bugünkü seferine bak',
   },
 });
 
@@ -224,6 +242,36 @@ function card(m: (typeof MODES)[number], day: number): HTMLElement {
   );
 }
 
+// ---------------------------------------------------------------- flagship
+function flagship(day: number): HTMLElement | null {
+  const m = MODES.find((x) => x.flagship);
+  if (!m) return null;
+  const res = getStats(m.id).history[day];
+  return h(
+    'section',
+    { class: 'fs', 'aria-label': m.name[lang] },
+    h(
+      'a',
+      { class: 'fs-card', href: `#/${m.id}` },
+      h('img', { class: 'fs-art', src: 'img/card-expedition.svg', alt: '', width: '800', height: '500', loading: 'eager' }),
+      h(
+        'div',
+        { class: 'fs-body' },
+        h('p', { class: 'fs-kicker' }, t('fsKicker')),
+        h('h2', { class: 'fs-title' }, t('fsTitle')),
+        h('p', { class: 'fs-text' }, t('fsText')),
+        h('ul', { class: 'fs-facts' }, h('li', {}, t('fsF1')), h('li', {}, t('fsF2')), h('li', {}, t('fsF3'))),
+        h(
+          'span',
+          { class: `btn cta fs-cta${res ? ' done' : ''}` },
+          res ? `✓ ${t('fsDone', { n: res.label })} · ${t('fsAgain')}` : t('fsPlay'),
+          h('span', { 'aria-hidden': 'true' }, '→'),
+        ),
+      ),
+    ),
+  );
+}
+
 // ---------------------------------------------------------------- competition panels
 function profilePanel(): HTMLElement {
   const p = progressSummary();
@@ -300,8 +348,8 @@ export function scrollToId(id: string) {
 }
 
 export function renderHome(day: number): HTMLElement {
-  const done = MODES.filter((m) => getStats(m.id).history[day]).length;
-  const next = MODES.find((m) => !getStats(m.id).history[day]);
+  const done = DAILY_MODES.filter((m) => getStats(m.id).history[day]).length;
+  const next = DAILY_MODES.find((m) => !getStats(m.id).history[day]);
   const p = progressSummary();
 
   const hero = h(
@@ -335,7 +383,7 @@ export function renderHome(day: number): HTMLElement {
       h('div', { class: 'today-progress' }, h('span', {}, t('progressTitle', { n: done })), h('div', { class: 'bar' }, h('i', { style: { width: `${(done / 6) * 100}%` } })), p.todayXp ? h('span', { class: 'xp-chip' }, `+${p.todayXp} XP`) : null),
       h('span', { class: 'today-rule', 'aria-hidden': 'true' }),
     ),
-    h('nav', { class: 'mc-grid', 'aria-label': t('discoveries') }, ...MODES.map((m) => card(m, day))),
+    h('nav', { class: 'mc-grid', 'aria-label': t('discoveries') }, ...DAILY_MODES.map((m) => card(m, day))),
   );
 
   const compete = h('section', { class: 'compete', id: 'records' }, profilePanel(), streakPanel(), recordsPanel());
@@ -353,5 +401,5 @@ export function renderHome(day: number): HTMLElement {
   );
 
   setTimeout(consumeScroll, 0);
-  return h('main', { class: 'home' }, hero, section, compete, foot);
+  return h('main', { class: 'home' }, hero, flagship(day), section, compete, foot);
 }

@@ -3,7 +3,7 @@
 Talk to the user in **Turkish**. They delegated product decisions ("product owner sensin"): make routine calls yourself, explain briefly, keep going.
 
 ## What this is
-Meridian: a free, static, daily geography puzzle site with six modes. Live at https://safaksekin.github.io/meridian/ (repo github.com/safaksekin/meridian, public). Day #1 = 2026-10-10.
+Meridian: a free, static, daily geography puzzle site with six small daily modes plus one flagship game (Expedition). Live at https://safaksekin.github.io/meridian/ (repo github.com/safaksekin/meridian, public). Day #1 = 2026-10-10.
 
 | id | TR name | Mechanic |
 |---|---|---|
@@ -12,6 +12,7 @@ Meridian: a free, static, daily geography puzzle site with six modes. Live at ht
 | mental | Zihin Haritası | Place the shapes of 7 countries on a blank canvas (one scale; the picked shape follows the pointer, `pieces.ts`); Procrustes fit; bias readout (tilt, N–S squash) |
 | headcount | Nüfus Çemberi | Drop a circle of radius R holding the target population (GHSL grid), 3 tries |
 | hinterland | Taşra | Guess the country from village names (ambiguous → giveaway order) |
+| **expedition** (flagship) | Sefer | Roguelike fuel-bank flight: each leg shows the next destination only through a clue window (coastline, GHSL population, village road signs, Streetprint crop); tap the globe, fly from where you are (cost = great-circle km + 250 take-off); land within 300 km → refuel, miss → direction + distance band, fly on. Buyable extras: sun clock, flag. Daily run (seed = day) + endless free runs (save slot 0, no stats). Score = legs. Longer than the small games (≈5–15 min) by design; each leg is one screen. Fuel economy tuned by simulation (`FUEL` in logic.ts, balance test in tests/expedition.test.mjs) |
 | tripoint | Üçlü Nokta | Map around a tripoint, every country in its own colour, no names; name the 3 that meet, 4 tries (hints: lakes + rivers, 500 km view, one country named) |
 
 ## Hard rules (from the user)
@@ -26,7 +27,7 @@ Meridian: a free, static, daily geography puzzle site with six modes. Live at ht
 ## Stack & layout
 Vite 7 + TypeScript strict, vanilla DOM, d3-geo, topojson. Hash routing (`#/beeline`).
 - `src/main.ts` router · `src/home/` home, header (`chrome.ts`), card art (`cardart.ts`)
-- `src/modes/<id>/` one folder per game (contract in `src/modes/types.ts`, guide in `docs/MODE_GUIDE.md`)
+- `src/modes/<id>/` one folder per game; `flagship: true` in `registry.ts` keeps Expedition out of the 3 × 2 grid (`DAILY_MODES`) and gives it its own showcase card on the home page (`flagship()` in `home.ts`, art `public/img/card-expedition.svg` from `scripts/build-expedition.mjs`) (contract in `src/modes/types.ts`, guide in `docs/MODE_GUIDE.md`)
 - Theme: follows the device by default; the header switch (`themeToggle` in `src/home/chrome.ts`) stores `meridian:pref:theme` and sets `data-theme` on `<html>` (applied before first paint by the inline script in `index.html`). Hidden in game headers on phones (no room).
 - `src/core/` daily seed, storage/stats, i18n (TR/EN via `makeT`), UI kit, globe controls (`globe.ts`: drag to turn, wheel / pinch / ± buttons to zoom; used by the Beeline globe and the Tripoint locator), progression (`progress.ts`: XP/levels/streak from local stats), friend challenges (`challenge.ts`: `?ch=` share links)
 - `scripts/build-<id>.mjs` pre-generate puzzles into `public/data/<id>/`; `scripts/build-images.mjs` (NASA PD / CC0 artwork via macOS `sips`); `scripts/build-art.mjs` (mental card SVG; tripoint card SVG = NASA base from build-images + real Natural Earth borders, frame in `scripts/lib/tripoint-card.mjs`)
@@ -35,7 +36,7 @@ Vite 7 + TypeScript strict, vanilla DOM, d3-geo, topojson. Hash routing (`#/beel
 ## Commands
 ```
 npm run dev          # local dev server
-npm test             # node --test (71 tests)
+npm test             # node --test (83 tests)
 npx tsc --noEmit     # type-check
 npm run deploy       # build + publish dist/ to gh-pages (GitHub Pages)
 npm run deploy:cf    # Cloudflare Pages copy (project meridian-geo) — not reachable from Turkey
@@ -55,6 +56,7 @@ Verify UI changes in headless Chromium (Playwright; `npx playwright install` dow
 - Share texts use English brand names ("Meridian Beeline #12") in both languages, by design.
 
 ## Next steps / open items
+0. Expedition (2026-10-14, first version): ideas for later: more clue windows (relief/hillshade, Sentinel-2 2016 only, rivers), ghost replay of a friend's route via `?ch=`. The user is open to a free backend (Supabase / Cloudflare free plans) for real global stats / leaderboards / live races: not built; note `*.workers.dev` / `*.pages.dev` don't load in Turkey (needs a custom domain), Supabase free pauses after a week idle. Ask before adding it.
 1. User wants to keep polishing the front end first; then I (the agent) draft listing posts for daily-game directories (dles.neocities.org, Listdle, BestDle) and Reddit (r/geography, r/geoguessr, r/travle) — only when the user says go.
 2. Before launch: `TEST_MODE = false`, final name/domain decision ("Meridian" is a working title; common brand name).
 3. Streetprint: ~39 planned crops never downloaded (Overpass rate limits). Re-run `node scripts/build-streets.mjs` (no `--offline`) to fetch them; cache lives in `data-raw/streets/overpass`.

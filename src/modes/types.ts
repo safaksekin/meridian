@@ -21,5 +21,7 @@ export interface ModeDef {
   icon: string;
   name: Record<Lang, string>;
   blurb: Record<Lang, string>;
+  /** The flagship game: its own showcase on the home page, outside the six-card daily grid. */
+  flagship?: boolean;
   load: () => Promise<{ default: ModeModule }>;
 }

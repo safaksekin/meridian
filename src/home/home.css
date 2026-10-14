@@ -61,6 +61,27 @@
 .hero-photo figcaption { display: flex; align-items: center; gap: 6px; padding: 8px 4px 9px; font: 600 0.72rem/1.2 var(--font-label); color: #1b2a40; letter-spacing: 0.03em; white-space: pre; }
 .hp-pin { width: 10px; height: 13px; flex: none; background: var(--brand-light); -webkit-mask: var(--pin) center / contain no-repeat; mask: var(--pin) center / contain no-repeat; }
 
+/* ---------------- flagship (Expedition) ---------------- */
+/* Always a dark navy card (the artwork's own sky), in both themes. */
+.fs { padding: 18px 0 26px; }
+.fs-card {
+  position: relative; display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); min-height: 380px; overflow: hidden;
+  border-radius: var(--radius-lg); background: #0b1b3a; color: #e9f1ff; text-decoration: none; box-shadow: var(--shadow);
+}
+.fs-art { position: absolute; top: 0; right: 0; width: 68%; height: 100%; object-fit: cover; object-position: 75% 45%; transition: transform 0.4s ease; }
+.fs-card:hover .fs-art { transform: scale(1.025); }
+.fs-body { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 34px 36px; }
+.fs-kicker { margin: 0; font: 700 0.74rem/1 var(--font-label); letter-spacing: 0.14em; text-transform: uppercase; color: #65d0f4; }
+.home .fs-title { margin: 0; color: #ffffff; font-size: clamp(2.2rem, 4.6vw, 3.4rem); font-weight: 850; font-stretch: 112%; letter-spacing: -0.03em; line-height: 1; }
+.fs-text { margin: 0; max-width: 31em; font-size: 1.02rem; line-height: 1.5; color: #c9d8f2; }
+.fs-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font: 600 0.86rem/1.3 var(--font-label); color: #e9f1ff; }
+.fs .fs-cta { margin-top: 6px; background: #2373f4; border-color: #2373f4; color: #fff; }
+.fs-card:hover .fs-cta { background: #1e62cf; border-color: #1e62cf; }
+.fs-card:hover .fs-cta span { transform: translateX(3px); }
+.fs-cta.done { background: #ffffff; border-color: #ffffff; color: #0b1b3a; }
+.fs-card:hover .fs-cta.done { background: #e9f1ff; border-color: #e9f1ff; }
+.fs-card:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
 /* ---------------- today ---------------- */
 .today-sec, .compete { scroll-margin-top: 58px; }
 .today-sec { padding: 26px 0 8px; border-top: 1px solid var(--line); }
@@ -158,6 +179,9 @@
   .hero-art { min-height: 0; aspect-ratio: 1600 / 902; margin: 0 -28px; }
   .hero-photo { width: 30%; top: 4%; right: 6%; }
   .mc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fs-card { grid-template-columns: 1fr; min-height: 0; }
+  .fs-art { position: relative; width: 100%; aspect-ratio: 16 / 9; height: auto; object-position: 70% 40%; }
+  .fs-body { padding: 22px 22px 26px; }
 }
 @media (max-width: 760px) {
   .compete { grid-template-columns: 1fr; }
@@ -173,6 +197,10 @@
   .hero-rose { width: 58px; height: 58px; }
   .today-progress .bar { width: 90px; }
   .today-rule { display: none; }
+  .fs { padding: 12px 0 18px; }
+  .fs-body { gap: 10px; padding: 16px 16px 20px; }
+  .fs-text { font-size: 0.92rem; }
+  .fs-facts { font-size: 0.8rem; }
   .mc-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .mc { border-radius: var(--radius); }
   .mc-media { aspect-ratio: 1; }
@@ -192,7 +220,8 @@
   .compete .panel-card { padding: 16px 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mc, .mc-media img, .mc-media .mc-overlay, .bar i, .link-btn span, .btn.cta span { transition: none; }
+  .mc, .mc-media img, .mc-media .mc-overlay, .bar i, .link-btn span, .btn.cta span, .fs-art { transition: none; }
+  .fs-card:hover .fs-art { transform: none; }
   .mc:hover { transform: none; }
 }
 /* Display type stretch (after shorthands) */

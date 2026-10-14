@@ -2,6 +2,17 @@ import type { ModeDef } from './types';
 
 export const MODES: ModeDef[] = [
   {
+    id: 'expedition',
+    icon: '✈️',
+    name: { en: 'Expedition', tr: 'Sefer' },
+    blurb: {
+      en: 'Fly around the world on one tank of fuel. Every destination is a clue.',
+      tr: 'Tek depo yakıtla dünyayı dolaş. Her durak bir ipucu.',
+    },
+    flagship: true,
+    load: () => import('./expedition/index'),
+  },
+  {
     id: 'beeline',
     icon: '🧭',
     name: { en: 'Beeline', tr: 'Düz Çizgi' },
@@ -44,3 +55,6 @@ export const MODES: ModeDef[] = [
     load: () => import('./tripoint/index'),
   },
 ];
+
+/** The six small daily puzzles (the home grid, the daily progress counter). */
+export const DAILY_MODES: ModeDef[] = MODES.filter((m) => !m.flagship);
