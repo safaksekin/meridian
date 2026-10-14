@@ -7,12 +7,12 @@ import { todayNumber } from './daily';
 import { lang, type Lang } from './i18n';
 
 /** Mode ids (hardcoded instead of importing the registry to keep core free of mode imports). */
-export const MODE_IDS = ['expedition', 'beeline', 'streets', 'mental', 'headcount', 'hinterland', 'tripoint'] as const;
+export const MODE_IDS = ['beeline', 'streets', 'mental', 'headcount', 'hinterland', 'tripoint'] as const;
 
 /** Modes whose label is "n/N" (solved in n guesses) or "X/N" (not solved). */
 export const GUESS_MODES: readonly string[] = ['beeline', 'streets', 'hinterland', 'tripoint'];
-/** Modes whose label is a score, higher is better ("74/100" for mental, "98" for headcount, "12" legs for expedition). */
-export const SCORE_MODES: readonly string[] = ['mental', 'headcount', 'expedition'];
+/** Modes whose label is a 0–100 score ("74/100" for mental, "98" for headcount). */
+export const SCORE_MODES: readonly string[] = ['mental', 'headcount'];
 
 export interface WeekDay {
   /** Short weekday label in the current language, e.g. "Pzt" / "Mon". */
@@ -35,7 +35,7 @@ export interface ProgressSummary {
   bestStreak: number;
   /** Monday-first current week. */
   week: WeekDay[];
-  /** Finished puzzles today (0–7: the six daily puzzles and the expedition). */
+  /** Finished puzzles today (0–6). */
   todayDone: number;
   /** XP earned today. */
   todayXp: number;
@@ -83,14 +83,12 @@ export const XP_CAP = 150;
  *     guess modes (label "n/N"): +10 per unused guess (N − n); "X/N" gives no bonus
  *     score modes (mental "74/100", headcount "98"): + floor(score / 2)
  * capped at 150 per puzzle.
- * Expedition (label = legs reached, "12"): 40 + 60 if won + 5 per leg, same cap.
  * Examples: beeline won in 2/6 → 40+60+40 = 140; beeline X/6 → 40;
  *           mental 74/100 won → 40+60+37 = 137; headcount 98 won → 40+60+49 = 149.
  */
 export function xpFor(modeId: string, won: boolean, label: string): number {
   let xp = XP_BASE + (won ? XP_WIN : 0);
   const p = parseLabel(modeId, label);
-  if (modeId === 'expedition') return Math.min(XP_CAP, xp + 5 * (p?.value ?? 0));
   if (p?.kind === 'guess' && p.solved) xp += 10 * Math.max(0, p.max - p.value);
   else if (p?.kind === 'score') xp += Math.floor(p.value / 2);
   return Math.min(XP_CAP, xp);
